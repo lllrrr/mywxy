@@ -825,8 +825,8 @@ autoUpdateSubscription = function(){
 			var http = inet.http();
 			for(url,v in outbondSubscribeUrlMap){ 
 				
-				if( string.indexOf(subscribeUrl,"github.com")
-					|| string.indexOf(subscribeUrl,"raw.githubusercontent.com") 
+				if( string.indexOf(url,"github.com")
+					|| string.indexOf(url,"raw.githubusercontent.com") 
 					){
 					outbondSubscribeUrlMap[url] = web.rest.github.getContent(url)
 				}
