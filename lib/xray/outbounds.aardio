@@ -86,7 +86,9 @@ importFromString = function(str,subscribeUrl){
 	str = ..string.trim(str);
 	
 	var jsonData;
-	if(..string.match(str,"%\[\]") || ..string.match(str,"%\{\}")){
+	if(..string.match(str,"%\[\]") || (
+		..string.match(str,"%\{\}") && !..string.match(str,"%\{\}.+%\{\}")
+		) ){
 		if(subscribeUrl)_subscriptionResponseCache[subscribeUrl] = ..string.crc32(str);
 		jsonData = ..web.json.tryParse(str);
 	}
@@ -477,8 +479,8 @@ validOutbound = function(outbound){
 		..table.define(outbound);
 	}
 	
-	if(outbound.peer && #outbound.peer){
-		outbound.sni = outbound.peer;
+	if(outbound.peer ){
+		if(#outbound.peer) outbound.sni = outbound.peer;
 		outbound.peer = null;
 		..table.define(outbound);
 	}
@@ -486,9 +488,10 @@ validOutbound = function(outbound){
 	if(!outbound.security){
 		if(outbound.method && outbound.method!="none"){
 			outbound.security = outbound.method;
-			outbound.method = null;
-			..table.define(outbound);
 		}
+		
+		outbound.method = null;
+		..table.define(outbound);
 	}
 	
 	if(!outbound.address){
@@ -505,11 +508,11 @@ validOutbound = function(outbound){
 			outbound.remarks = null;
 			..table.define(outbound);
 		}
-	}
+	} 
 	
 	if(!outbound.protocol){
 		outbound.protocol = "vmess";
-		if(outbound.ps && ..string.find(outbound.ps,"@@vless")){
+		if(outbound.ps && (..string.find(outbound.ps,"@@vless") || ..string.find(outbound.ps,"@@xtls"))){
 			outbound.protocol = "vless";
 		}
 	}

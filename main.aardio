@@ -17,7 +17,7 @@ elseif(_ARGV.sshInstall){
     			_ARGV.sshInstall = "-p" + port +" " + dest;
     		}
     		
-        	prcs = process("ssh","-t " +_ARGV.sshInstall + ` "firewall-cmd --permanent --add-port=80/tcp;firewall-cmd --permanent --add-port=443/tcp;firewall-cmd --reload;iptables -A INPUT -p tcp --dport 80 -j ACCEPT;iptables -A INPUT -p tcp --dport 443 -j ACCEPT;wget -P /root -N --no-check-certificate ""https://raw.githubusercontent.com/mack-a/v2ray-agent/master/install.sh"" && chmod 700 /root/install.sh && /root/install.sh"`)
+        	prcs = process("ssh","-t " +_ARGV.sshInstall + ` "echo -e '安装完成以后，您可以一次性复制所有服务器账号配置 - 然后在 winXray 主界面点击\e[1;31m「批量导入链接」\e[0m即可，winXray将逐行识别有效的服务器分享链接或通用JSON配置，并忽略无效的行。如果 CentOS 8安装失败 - 可尝试更换为 CentOS 7 并重新安装。\n';firewall-cmd --permanent --add-port=80/tcp;firewall-cmd --permanent --add-port=443/tcp;firewall-cmd --reload;iptables -A INPUT -p tcp --dport 80 -j ACCEPT;iptables -A INPUT -p tcp --dport 443 -j ACCEPT;wget -P /root -N --no-check-certificate ""https://raw.githubusercontent.com/mack-a/v2ray-agent/master/install.sh"" && chmod 700 /root/install.sh && /root/install.sh"`)
    			if(!prcs){
    				if(_WIN10_LATER){
    					import process.control; 
@@ -159,7 +159,7 @@ import win.ui;
 /*DSG{{*/
 mainForm = win.form(text="winXray";right=1019;bottom=679;bgcolor=15793151;border="none")
 mainForm.add(
-caption={cls="bkplus";text="winXray 1.7.1";left=67;top=9;right=727;bottom=27;align="left";color=6052956;dl=1;dt=1;font=LOGFONT(h=-14);z=7};
+caption={cls="bkplus";text="winXray 1.7.2";left=67;top=9;right=727;bottom=27;align="left";color=6052956;dl=1;dt=1;font=LOGFONT(h=-14);z=7};
 custom={cls="custom";left=83;top=40;right=1022;bottom=679;bgcolor=16777215;db=1;dl=1;dr=1;dt=1;z=4};
 logo={cls="bkplus";text='\uF1D9';left=35;top=7;right=64;bottom=32;color=3054125;dl=1;dt=1;font=LOGFONT(h=-18;name='FontAwesome');z=6};
 navBar={cls="bkplus";left=0;top=37;right=83;bottom=681;bgcolor=3442175;db=1;dl=1;dt=1;z=1};
