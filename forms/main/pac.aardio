@@ -139,8 +139,6 @@ winform.savePacToFile = function(){
 	
 	winform.editPacDirect.modified = false;
 	winform.editPacProxy.modified = false;
-
-	..xray.pacServer.updateConfig();
 	sysProxy.reset(true);
 	
 	winform.msgOk("已保存PAC文件",1200);
