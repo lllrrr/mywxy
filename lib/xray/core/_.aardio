@@ -60,7 +60,7 @@ restart = function(editor,outbound){
 	..sysProxy.reset(false);	
 	
 	var err;
-	prcsXray,err = ..process.popen(corePath,"run","-c=config.json" );
+	prcsXray,err = ..process.popen(corePath,"-c=config.json" );
 	if(!prcsXray){
 		..publish("uiCommand.print",err:"启动 Xray Core 时遇到未知错误!");
 		
