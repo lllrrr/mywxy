@@ -118,7 +118,7 @@ winform.btnUpdate.oncommand = function(id,event){
 
 import sysProxy;
 import string.conv;
-import xray.pacServer;
+import v2ray.pacServer;
 winform.savePacToFile = function(){
 	var proxy =  web.json.tryParse(string.conv.fromWide(winform.editPacProxy.text))
 	var direct =  web.json.tryParse(string.conv.fromWide(winform.editPacDirect.text))
@@ -131,7 +131,7 @@ winform.savePacToFile = function(){
 		return winform.msgErr("直连域名配置格式错误");
 	}
 		
-	xray.pacServer.savePacText(web.json.stringify({{direct;proxy}},true));
+	v2ray.pacServer.savePacText(web.json.stringify({{direct;proxy}},true));
 	
 	winform.editPacDirect.modified = false;
 	winform.editPacProxy.modified = false;
@@ -160,8 +160,8 @@ winform.btnReset.oncommand = function(id,event){
 
 	thread.invoke( 
 		function(winform){
-			import xray.pacServer;
-			winform.loadPacToEdit(xray.pacServer.loadPacText()); 
+			import v2ray.pacServer;
+			winform.loadPacToEdit(v2ray.pacServer.loadPacText()); 
 			
 			winform.btnReset.disabledText = null;
 			winform.btnSave.disabled = true;
@@ -171,8 +171,8 @@ winform.btnReset.oncommand = function(id,event){
 	)
 }
 
-import xray.pacServer;
-winform.loadPacToEdit( xray.pacServer.loadPacText() );
+import v2ray.pacServer;
+winform.loadPacToEdit( v2ray.pacServer.loadPacText() );
 
 winform.editPacProxy.modified = false;
 winform.editPacDirect.modified = false;
@@ -298,15 +298,15 @@ winform.editPacDirect.enablePopMenu(function(){
 		}; 
 		{ "重置为默认PAC";
 			function(id){ 
-				import xray.pacServer;
-				xray.pacServer.resetPac();
-				winform.loadPacToEdit(xray.pacServer.loadPacText());
+				import v2ray.pacServer;
+				v2ray.pacServer.resetPac();
+				winform.loadPacToEdit(v2ray.pacServer.loadPacText());
 			}
 		}; 
 		{ "恢复为当前使用的PAC";
 			function(id){ 
-				import xray.pacServer;
-				winform.loadPacToEdit(xray.pacServer.loadPacText());
+				import v2ray.pacServer;
+				winform.loadPacToEdit(v2ray.pacServer.loadPacText());
 			}
 		}; 
 	}
@@ -364,15 +364,15 @@ winform.editPacProxy.enablePopMenu(function(){
 		};
 		{ "重置为默认PAC";
 			function(id){ 
-				import xray.pacServer;
-				xray.pacServer.resetPac();
-				winform.loadPacToEdit(xray.pacServer.loadPacText());
+				import v2ray.pacServer;
+				v2ray.pacServer.resetPac();
+				winform.loadPacToEdit(v2ray.pacServer.loadPacText());
 			}
 		}; 
 		{ "恢复为当前使用的PAC";
 			function(id){ 
-				import xray.pacServer;
-				winform.loadPacToEdit(xray.pacServer.loadPacText());
+				import v2ray.pacServer;
+				winform.loadPacToEdit(v2ray.pacServer.loadPacText());
 			}
 		}; 
 	}

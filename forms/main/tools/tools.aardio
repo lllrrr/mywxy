@@ -9,11 +9,11 @@ btnDeleteIconCache={cls="plus";text="修复桌面图标空白";left=26;top=485;r
 btnDnsFlush={cls="plus";text="清空DNS缓存";left=26;top=202;right=412;bottom=244;align="left";color=3947580;dl=1;dt=1;font=LOGFONT(h=-16);iconStyle={align="left";font=LOGFONT(h=-27;name='FontAwesome');padding={left=18}};iconText='\uF021';notify=1;textPadding={left=50};z=5};
 btnGitHub={cls="plus";text="github 网速优化";left=26;top=296;right=262;bottom=338;align="left";color=3947580;dl=1;dt=1;font=LOGFONT(h=-16);iconStyle={align="left";font=LOGFONT(h=-27;name='FontAwesome');padding={left=18}};iconText='\uF09B';notify=1;textPadding={left=50};z=2};
 btnQrCode={cls="plus";text="二维码生成工具";left=26;top=344;right=262;bottom=386;align="left";color=3947580;dl=1;dt=1;font=LOGFONT(h=-16);iconStyle={align="left";font=LOGFONT(h=-27;name='FontAwesome');padding={left=18}};iconText='\uF029';notify=1;textPadding={left=50};z=15};
-btnSshInstall={cls="plus";text="一键安装 Xray 服务端";left=393;top=14;right=601;bottom=56;align="left";color=3947580;dl=1;dt=1;font=LOGFONT(h=-16);iconStyle={align="left";font=LOGFONT(h=-27;name='FontAwesome');padding={left=11}};iconText='\uF17C';notify=1;textPadding={left=40};z=10};
+btnSshInstall={cls="plus";text="一键安装 V2Ray 服务端";left=393;top=14;right=601;bottom=56;align="left";color=3947580;dl=1;dt=1;font=LOGFONT(h=-16);iconStyle={align="left";font=LOGFONT(h=-27;name='FontAwesome');padding={left=11}};iconText='\uF17C';notify=1;textPadding={left=40};z=10};
 btnSshInstallKey={cls="plus";text="安装SSH密钥";left=606;top=15;right=755;bottom=57;align="left";color=3947580;dl=1;dt=1;font=LOGFONT(h=-16);iconStyle={align="left";font=LOGFONT(h=-24;name='FontAwesome');padding={left=11}};iconText='\uF084';notify=1;textPadding={left=40};z=12};
 btnTestSpeed={cls="plus";text="当前代理服务器测速";left=26;top=61;right=244;bottom=103;align="left";color=3947580;dl=1;dt=1;font=LOGFONT(h=-16);iconStyle={align="left";font=LOGFONT(h=-24;name='FontAwesome');padding={left=18}};iconText='\uF0ED';notify=1;textPadding={left=50};z=13};
-btnUpdateSystemTime={cls="plus";text="同步系统时间（ 修正 Xray 连接报错 ）";left=26;top=155;right=412;bottom=197;align="left";color=3947580;dl=1;dt=1;font=LOGFONT(h=-16);iconStyle={align="left";font=LOGFONT(h=-27;name='FontAwesome');padding={left=18}};iconText='\uF017';notify=1;textPadding={left=50};z=4};
-btnUpdateXrayCore={cls="plus";text="更新 Xray Core";left=26;top=108;right=269;bottom=150;align="left";color=3947580;dl=1;dt=1;font=LOGFONT(h=-16);iconStyle={align="left";font=LOGFONT(h=-27;name='FontAwesome');padding={left=18}};iconText='\uF01A';notify=1;textPadding={left=50};z=6};
+btnUpdateSystemTime={cls="plus";text="同步系统时间（ 修正 V2Ray 连接报错 ）";left=26;top=155;right=412;bottom=197;align="left";color=3947580;dl=1;dt=1;font=LOGFONT(h=-16);iconStyle={align="left";font=LOGFONT(h=-27;name='FontAwesome');padding={left=18}};iconText='\uF017';notify=1;textPadding={left=50};z=4};
+btnUpdateV2RayCore={cls="plus";text="更新 V2ray Core";left=26;top=108;right=269;bottom=150;align="left";color=3947580;dl=1;dt=1;font=LOGFONT(h=-16);iconStyle={align="left";font=LOGFONT(h=-27;name='FontAwesome');padding={left=18}};iconText='\uF01A';notify=1;textPadding={left=50};z=6};
 btnUuid={cls="plus";text="UUID 生成工具";left=26;top=391;right=262;bottom=433;align="left";color=3947580;dl=1;dt=1;font=LOGFONT(h=-16);iconStyle={align="left";font=LOGFONT(h=-27;name='FontAwesome');padding={left=18}};iconText='\uF13E';notify=1;textPadding={left=50};z=16};
 btnWubiLex={cls="plus";text="WIN10 五笔助手（仅830KB，自带五笔86、98、091、新世纪、郑码……）";left=26;top=532;right=661;bottom=574;align="left";color=3947580;dl=1;dt=1;font=LOGFONT(h=-16);iconStyle={align="left";font=LOGFONT(h=-24;name='FontAwesome');padding={left=18}};iconText='\uF11C';notify=1;textPadding={left=50};z=7};
 btnYoutube={cls="plus";text="youtube 视频下载工具";left=26;top=249;right=262;bottom=291;align="left";color=3947580;dl=1;dt=1;font=LOGFONT(h=-16);iconStyle={align="left";font=LOGFONT(h=-27;name='FontAwesome');padding={left=18}};iconText='\uF167';notify=1;textPadding={left=50};z=1};
@@ -70,7 +70,7 @@ winform.btnUpdateSystemTime.oncommand = function(id,event){
 		winform.btnUpdateSystemTime.text = '时间已同步'
 		winform.setTimeout( 
 			function(){
-				winform.btnUpdateSystemTime.text = '同步系统时间（ 修正 xray 连接报错 ）'
+				winform.btnUpdateSystemTime.text = '同步系统时间（ 修正 v2ray 连接报错 ）'
 			},2000) 
 	}
 	else {
@@ -93,19 +93,19 @@ winform.btnDnsFlush.oncommand = function(id,event){
 	winform.btnDnsFlush.disabledText = null;
 }
 
-winform.btnUpdateXrayCore.skin(style.plainButton)
-winform.btnUpdateXrayCore.oncommand = function(id,event){
-	winform.btnUpdateXrayCore.disabledText = {'\uF254';'\uF251';'\uF252';'\uF253';'\uF250'};
+winform.btnUpdateV2RayCore.skin(style.plainButton)
+winform.btnUpdateV2RayCore.oncommand = function(id,event){
+	winform.btnUpdateV2RayCore.disabledText = {'\uF254';'\uF251';'\uF252';'\uF253';'\uF250'};
 	
-	import xray.core;
-	var versionTag = xray.core.updateCore();
+	import v2ray.core;
+	var versionTag = v2ray.core.updateCore();
 	if( versionTag ){
-		publish("uiCommand.restartXrayCore");
-		winform.btnUpdateXrayCore.disabledText = null;
-		winform.msgOk("Xray Core 已更新到：" + versionTag,1500)
+		publish("uiCommand.restartV2RayCore");
+		winform.btnUpdateV2RayCore.disabledText = null;
+		winform.msgOk("V2Ray Core 已更新到：" + versionTag,1500)
 	}
 	else {
-		winform.btnUpdateXrayCore.disabledText = null;
+		winform.btnUpdateV2RayCore.disabledText = null;
 	} 
 }
 
@@ -172,7 +172,7 @@ winform.btnCreateLnk.oncommand = function(id,event){
 	
 	import fsys.lnk;  
 	var lnk = fsys.lnk(); 
-	lnk.description = "winXray(Xray/V2Ray、Shadowsocks、Trojan通用客户端 )"  
+	lnk.description = "winXray(V2Ray/V2Ray、Shadowsocks、Trojan通用客户端 )"  
 	
 	lnk.path = io._exepath //设置目标路径
 	lnk.setIcon(io._exepath,0); //设置图标
@@ -196,8 +196,8 @@ winform.btnTestSpeed.oncommand = function(id,event){
 		return; 
 	}
 	
-	import xray.core;
-	if(!xray.core.socksProxyPort){
+	import v2ray.core;
+	if(!v2ray.core.socksProxyPort){
 		winform.msgFrown('抱歉，当前未连接到任何代理服务器！');
 		return; 
 	}
@@ -227,7 +227,7 @@ winform.btnTestSpeed.oncommand = function(id,event){
 				return null;
 			}
 			restClient.close();
-		},xray.core.socksProxyPort 
+		},v2ray.core.socksProxyPort 
 	)
 	
 	if(!ipip){
@@ -239,7 +239,7 @@ winform.btnTestSpeed.oncommand = function(id,event){
 	winform.lbCurrentProxyLocation.text = ipip;
 	
 	import process
-	process.execute(chromePath,` --proxy-server="SOCKS5://127.0.0.1:`+xray.core.socksProxyPort 
+	process.execute(chromePath,` --proxy-server="SOCKS5://127.0.0.1:`+v2ray.core.socksProxyPort 
 		+`" --user-data-dir="` +io.appData("winXray/chrome-socks5")+ `" --app="https://speed.cloudflare.com/"`);
 	winform.btnTestSpeed.disabledText = null;
 }

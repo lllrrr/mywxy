@@ -163,9 +163,9 @@ winform.btnUpdate.oncommand = function(id,event){
 	
 	if(removed) config.proxy.save();
 		
-	import xray.outbounds;
-	if(!xray.outbounds.updateSubscription()){
-		if(removed) publish("uiCommand.restartXrayCore",outbounds) 
+	import v2ray.outbounds;
+	if(!v2ray.outbounds.updateSubscription()){
+		if(removed) publish("uiCommand.restartV2RayCore",outbounds) 
 	}
 	
 	winform.btnUpdate.disabledText = null;
@@ -208,7 +208,7 @@ winform.btnRemove.oncommand = function(id,event){
 	config.proxy.save();
 	
 	if(outboundRemoved){
-		publish("uiCommand.restartXrayCore") 
+		publish("uiCommand.restartV2RayCore") 
 	}
 	else {
 		win.delay(200);

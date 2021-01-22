@@ -1,8 +1,8 @@
 {
-    "description":"发布 v2.3，修正刷新clash订阅连接重复添加服务器，改进订阅管理等。",
+    "description":"发布 v2.4，放弃Xray/XTLS改为稳定内核V2rayCore，强力优化 PAC 代理模式，添加切换PAC与全局代理模式的热键。",
     "format":".lzma",
     "main":"\\winXray.exe",
     "updater":"\\winXray.exe",
     "url":"https://raw.githubusercontent.com/winXray/winXray/master/release/update/",
-    "version":"2.3.0.01"
+    "version":"2.4.0.01"
 }

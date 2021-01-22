@@ -11,9 +11,9 @@ lbTip={cls="static";text="可在下面输入多行服务器分享链接，或JSO
 navAdvancedConfig={cls="plus";text="代理端口 / 高级配置";left=359;top=750;right=493;bottom=782;border={top=1;color=-16744448};db=1;dl=1;z=9};
 navCoreConfig={cls="plus";text="Xray配置 ( JSON )";left=162;top=750;right=293;bottom=782;border={top=1;color=-16744448};db=1;dl=1;z=2};
 navOutbounds={cls="plus";text="服务器配置( JSON )";left=31;top=750;right=162;bottom=782;border={top=1;color=-16744448};db=1;dl=1;z=1};
-navRight={cls="plus";left=493;top=750;right=762;bottom=751;bgcolor=16777215;border={color=-16744448};db=1;dl=1;dr=1;forecolor=32768;linearGradient=180;z=3};
+navRight={cls="plus";left=493;top=750;right=762;bottom=751;bgcolor=16777215;border={top=1;color=-16744448};db=1;dl=1;dr=1;linearGradient=180;z=3};
 navSubscription={cls="plus";text="订阅";left=293;top=750;right=359;bottom=782;border={top=1;color=-16744448};db=1;dl=1;z=12};
-plus={cls="plus";left=9;top=750;right=31;bottom=751;border={color=-16744448};db=1;dl=1;forecolor=32768;z=4};
+plus={cls="plus";left=9;top=750;right=31;bottom=751;border={top=1;color=-16744448};db=1;dl=1;z=4};
 subscription={cls="\forms\main\config\subscription.aardio";left=9;top=29;right=902;bottom=739;bgcolor=16777215;db=1;dl=1;dr=1;dt=1;edge=1;z=11}
 )
 /*}}*/
@@ -98,19 +98,19 @@ winform.btnUpdate.oncommand = function(id,event){
 			}
 			
 			if(cfg){
-				cfg = xray.outbounds.validAll(cfg)	
+				cfg = v2ray.outbounds.validAll(cfg)	
 			}
 			config.proxy.outbounds = cfg : ..table.array();
 		}
 		else {
-			var outbounds = xray.outbounds.importFromString(winform.editOutbounds.text);
+			var outbounds = v2ray.outbounds.importFromString(winform.editOutbounds.text);
 			config.proxy.outbounds = outbounds : ..table.array(); 
 			winform.editOutbounds.text = web.json.stringifyArray(outbounds,true,false,true);
 		}
 		
 		config.proxy.save();
 		winform.editOutbounds.modified = false;
-		publish("uiCommand.restartXrayCore",cfg)    	
+		publish("uiCommand.restartV2RayCore",cfg)    	
 	}
 	elseif(tbs.selIndex==2) {
 		var cfg,err = web.json.tryParse(winform.editCoreConfig.text);
@@ -152,7 +152,8 @@ winform.btnUpdate.oncommand = function(id,event){
 		
 		config.core.default = cfg;
 		config.core.save();
-		publish("uiCommand.restartXrayCore",cfg)   
+		
+		publish("uiCommand.restartV2RayCore",cfg);   
 		publish("config.core.changed");
 	} 
 
@@ -162,7 +163,7 @@ winform.btnUpdate.oncommand = function(id,event){
 }
 
 
-import xray.outbounds;
+import v2ray.outbounds;
 winform.editOutbounds.enablePopMenu(function(){
 	if(tbs.selIndex==1){
 		var strEditBounds = string.trim(winform.editOutbounds.text);
@@ -171,7 +172,7 @@ winform.editOutbounds.enablePopMenu(function(){
 			{ "自剪贴板导入 vmess/vless/trojan/ss 链接或订阅源";
 				function(id){ 
 					
-					var outbounds = xray.outbounds.importFromClipboard();
+					var outbounds = v2ray.outbounds.importFromClipboard();
 					if(#outbounds){ 
 						var json = strEditBounds;
 						if( (!#json) || ..string.match(json,"%\[\]")){
@@ -198,7 +199,7 @@ winform.editOutbounds.enablePopMenu(function(){
 							winform.editOutbounds.text = ..web.json.stringifyArray(cfgOutbounds,true,false,true);
 						}
 						else {
-							var str = xray.outbounds.exportSharedLinks(outbounds);
+							var str = v2ray.outbounds.exportSharedLinks(outbounds);
 							if(#strEditBounds){
 								winform.editOutbounds.text = strEditBounds+ '\r\n' + str;
 							}
@@ -254,7 +255,7 @@ winform.editOutbounds.enablePopMenu(function(){
 						
 					var count = 0;
 					for(url,v in subscribeUrls){ 
-						var outbounds = xray.outbounds.importFromString(url);
+						var outbounds = v2ray.outbounds.importFromString(url);
 						if(#outbounds){
 							for(i=#cfg;1;-1){
 								var outbound = cfg[i] 
@@ -298,7 +299,7 @@ winform.editOutbounds.enablePopMenu(function(){
 						} 
 					}
 					
-					var str = xray.outbounds.exportSharedLinks(cfgOutbouds);
+					var str = v2ray.outbounds.exportSharedLinks(cfgOutbouds);
 					if(str){ 
 						winform.editOutbounds.text = str;
 						winform.editOutbounds.modified = true;
@@ -313,7 +314,7 @@ winform.editOutbounds.enablePopMenu(function(){
 						return;
 					}
 		
-					var str = xray.outbounds.exportSharedLinks(cfg);
+					var str = v2ray.outbounds.exportSharedLinks(cfg);
 					if(str){ 
 						import crypt;
 						winform.editOutbounds.text = ..crypt.encodeBin(str);
@@ -328,7 +329,7 @@ winform.editOutbounds.enablePopMenu(function(){
 			menu[4] = { "转换为 JSON";
 				function(id){
 					import web.json;
-					var outbounds = xray.outbounds.importFromString(strEditBounds);
+					var outbounds = v2ray.outbounds.importFromString(strEditBounds);
 					if(outbounds){ 
 						winform.editOutbounds.text = web.json.stringifyArray(outbounds,true,false,true);
 						winform.editOutbounds.modified = true;
@@ -370,8 +371,8 @@ winform.editOutbounds.enablePopMenu(function(){
 					config.proxy.outbounds,true,false,true
 				)
 				
-				string.save("/xray-core/winXray-default-servers.json",str );
-				winform.msgOk("已存为默认服务器列表 /xray-core/winXray-default-servers.json",1000)
+				string.save("/v2ray-core/winXray-default-servers.json",str );
+				winform.msgOk("已存为默认服务器列表 /v2ray-core/winXray-default-servers.json",1000)
 			} 
 		}); 
 				
@@ -396,7 +397,7 @@ winform.editOutbounds.enablePopMenu(function(){
 				winform.btnUpdate.disabledText = {'\uF254';'\uF251';'\uF252';'\uF253';'\uF250'}
 				..config.__loadDefaultOutbounds();
 				winform.editOutbounds.modified = false;
-				publish("uiCommand.restartXrayCore",cfg);
+				publish("uiCommand.restartV2RayCore",cfg);
 				
 				winform.btnUpdate.disabledText = null;
 			} 
@@ -533,7 +534,7 @@ winform.editOutbounds.enablePopMenu(function(){
 
 winform.editCoreConfig.enablePopMenu({ 
 	{ /*---分隔线---*/ };
-	{ "重置为默认 Xray 配置";
+	{ "重置为默认 V2Ray 配置";
 		function(id){  
 			config.__resetDefaultCore();
 			winform.editCoreConfig.text = web.json.stringify( 
