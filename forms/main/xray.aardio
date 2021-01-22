@@ -123,23 +123,25 @@ Accept-Charset:utf-8;
 }
 
 var autoUpdateSubscriptionTimerId; 
-var autoUpdateSubscription = function(...){
+frmXray.autoUpdateSubscription = function(timeout){
   	..win.clearTimeout(autoUpdateSubscriptionTimerId); 
-  	autoUpdateSubscriptionTimerId = ..win.setTimeout(function(...){
+  	if(timeout===-1){
   		autoUpdateSubscriptionTimerId = null;
-  		
-  		import xray.outbounds;
-		xray.outbounds.autoUpdateSubscription();
-  	},10000,...)
+  		return;
+  	}
+  	
+  	if(config.proxy.autoRefreshSubscription){
+  		autoUpdateSubscriptionTimerId = ..win.setTimeout(function(){
+  			autoUpdateSubscriptionTimerId = null;
+  			
+  			import xray.outbounds;
+			xray.outbounds.autoUpdateSubscription();
+  		},timeout:10000)  		
+  	}
 } 
 
 frmXray.onStartXrayComplete = function(outboundIndex,currentTesting){
-
-    if(autoUpdateSubscriptionTimerId){
-    	..win.clearTimeout(autoUpdateSubscriptionTimerId); 
-    	autoUpdateSubscriptionTimerId = null;
-    }
-    
+	frmXray.autoUpdateSubscription(-1);
 	frmXray.listview.ensureVisible(outboundIndex);
 	
 	for b,v in table.eachIndex(config.proxy.outbounds){
@@ -158,7 +160,11 @@ frmXray.onStartXrayComplete = function(outboundIndex,currentTesting){
 		frmXray.listview.setItemText("...",outboundIndex,7);
 	}
 		
-	frmXray.onTcpingReturn = function(){};
+	frmXray.onTcpingReturn = function(outboundIndex,address,succeeded,speedText){
+		if(address==frmXray.listview.getItemText(outboundIndex,2)){
+			frmXray.listview.setItemText(speedText,outboundIndex,7);
+		}
+	};
 	frmXray.validOutbounds = {};
 	
 	frmXray.btnTcping.disabledText = null;
@@ -172,7 +178,7 @@ subscribe("activeOutbound",function(address){
 frmXray.onStartXrayFailed = function(outboundIndex,enableRetry){
 
     ..publish("activeOutbound",false);
-    autoUpdateSubscription();
+    frmXray.autoUpdateSubscription();
     
 	frmXray.listview.ensureVisible(outboundIndex);
 	if(frmXray.listview.activeOutboundIndex==outboundIndex){
@@ -214,9 +220,8 @@ var tcping = function(frmXray,outboundIndex,outbound){
 			var ret = client.send("."); 
 			client.close();
 			
-			if( ret != 1){ 
-				frmXray.listview.setItemText("不可用",outboundIndex,7);
-				frmXray.onTcpingReturn(outboundIndex,outbound.address,false);
+			if( ret != 1){  
+				frmXray.onTcpingReturn(outboundIndex,outbound.address,false,"不可用");
 				return;
 			}
 			timeout =  timeout + (time.tick() - tickBegin);
@@ -225,17 +230,45 @@ var tcping = function(frmXray,outboundIndex,outbound){
 			client.close();
 			
 			failed++;
-			if(failed>1){
-				frmXray.listview.setItemText("不可用",outboundIndex,7);
-				frmXray.onTcpingReturn(outboundIndex,outbound.address,false);
+			if(failed>1){ 
+				frmXray.onTcpingReturn(outboundIndex,outbound.address,false,"不可用");
 				return;	
 			} 
 		} 
 	}
 	
-	frmXray.onTcpingReturn(outboundIndex,outbound.address,true);
-	frmXray.listview.setItemText(math.round(timeout / (8-failed) / 1000,2)+"秒",outboundIndex,7);
+	frmXray.onTcpingReturn(outboundIndex,outbound.address,true,math.round(timeout / (8-failed) / 1000,2)+"秒"); 
 };
+
+var retryOnNetworkAliveTimerId;
+frmXray.onTcpingFailed = function(){
+	frmXray.autoTesting = false;
+	frmXray.btnTcping.disabledText = null;	
+	
+	if(retryOnNetworkAliveTimerId){
+		frmXray.clearTimeout(retryOnNetworkAliveTimerId);
+	}
+	 
+	if(inet.http.isAlive(,false)){	
+		frmXray.autoUpdateSubscription(1000);
+	}
+	else {
+		retryOnNetworkAliveTimerId = frmXray.setInterval( 
+			1000,function(){
+				if(frmXray.listview.activeOutboundIndex){
+					retryOnNetworkAliveTimerId = null;
+					return 0;
+				}
+				
+				if(inet.http.isAlive(,false)){
+					frmXray.btnTcping.oncommand();
+					retryOnNetworkAliveTimerId = null;
+					return false;
+				}	
+			} 
+		) 
+	}  
+} 
 
 import sysProxy; 
 import style;
@@ -254,42 +287,39 @@ frmXray.btnTcping.oncommand = function(id,event){
 			return;
 		}
 		
-		var faieldCount = 0;
-		frmXray.onTcpingReturn = function(outboundIndex,address,succeeded){
+		var failedCount = 0;
+		frmXray.onTcpingReturn = function(outboundIndex,address,succeeded,speedText){
 			if(address!=frmXray.listview.getItemText(outboundIndex,2)){
 				return; 
-			}
-			
-			if(config.proxy.outbounds[outboundIndex].autoConnect === false ){
-				faieldCount++;
-				if(faieldCount==#items) frmXray.autoTesting = false;
-				return;
-			}
+			} 
+			frmXray.listview.setItemText(speedText,outboundIndex,7);
 			
 			if(succeeded){
+				frmXray.listview.setItemText(speedText,outboundIndex,7);
 				frmXray.validOutbounds = {}
-				frmXray.onTcpingReturn = function(outboundIndex,address,succeeded){
+				frmXray.onTcpingReturn = function(outboundIndex,address,succeeded,speedText){
 					if(address!=frmXray.listview.getItemText(outboundIndex,2)){
 						return; 
-					}
+					} 
 					
-					if(config.proxy.outbounds[outboundIndex].autoConnect === false ){
-						faieldCount++;
-						if(faieldCount==#items) frmXray.autoTesting = false;
-						return;
+					frmXray.listview.setItemText(speedText,outboundIndex,7);
+					if(succeeded) { 
+						table.push(frmXray.validOutbounds,{outboundIndex;address});
 					}
-					
-					if(succeeded) table.push(frmXray.validOutbounds,{outboundIndex;address});
 					else{
-						faieldCount++;
-						if(faieldCount==#items) frmXray.autoTesting = false;
+						failedCount++;
+						if(failedCount==#items) {
+							frmXray.onTcpingFailed();
+						}
 					}
 				}
 				activeOutbound(outboundIndex,address,#items>1);	
 			}
 			else{
-				faieldCount++;
-				if(faieldCount==#items) frmXray.autoTesting = false;
+				failedCount++;
+				if(failedCount==#items) {
+					frmXray.onTcpingFailed(); 
+				}
 			}
 		}
 			
@@ -390,7 +420,11 @@ frmXray.listview.onnotify = function(id,code,ptr){
 		case  0xFFFFFFFD/*_NM_DBLCLK*/ {
 			var nm = frmXray.listview.getNotifyMessage(code,ptr);
 			if( nm ){
-				frmXray.onTcpingReturn = function(i){}
+				frmXray.onTcpingReturn = function(outboundIndex,address,succeeded,speedText){
+					if(address==frmXray.listview.getItemText(outboundIndex,2)){
+						frmXray.listview.setItemText(speedText,outboundIndex,7);
+					} 
+				}
 				frmXray.btnTcping.disabledText = null;
 				
 				for b,v in table.eachIndex(config.proxy.outbounds){
@@ -460,7 +494,12 @@ frmXray.listview.onnotify = function(id,code,ptr){
 			if(#selectedItems==1){
 				popmenu.add('设为活动服务器( 鼠标双击 )',function(id){
 					if(currentIdx){
-						frmXray.onTcpingReturn = function(i){}
+						frmXray.onTcpingReturn = function(outboundIndex,address,succeeded,speedText){
+							if(address==frmXray.listview.getItemText(outboundIndex,2)){
+								frmXray.listview.setItemText(speedText,outboundIndex,7);
+							} 
+						}
+						
 						frmXray.btnTcping.disabledText = null;
 						
 						for b,v in table.eachIndex(config.proxy.outbounds){
@@ -680,7 +719,7 @@ frmXray.listview.sortBySpeed = function () {
 	
     var outbounds = ..table.clone(config.proxy.outbounds);
     var activeIndex = frmXray.listview.activeOutboundIndex;
-    frmXray.onTcpingReturn = function(){}; //避免后台线程改变activeIndex
+    frmXray.onTcpingReturn = function(outboundIndex,address,succeeded,speedText){}; //避免后台线程改变activeIndex
     
     for(i=#outbounds;1;-1){
         var ob = outbounds[i];
@@ -765,7 +804,6 @@ import win.imageList;
 var iml = win.imageList(16, 15);
 iml.add('GIF\56\57a \0\15\0\x80\0\0\x80\x80\x80\xff\0\xff\33\xf9\4\0\0\0\0\0\44\0\0\0\0 \0\15\0\0\2\31\x8c\x8f\xa9\xcb\xed\15\xa3\x9c\xb4N\xf0\x80\xde\56k\xbfA\\\xd7\x84 \x97Y\xea\xca\xb6\xee\11\xc7F\1\0;', 0xff00ff);
 frmXray.listview.setColumnImageList(iml);
-
 
 subscribe("uiCommand.restartXrayCore",function(){ 
 	config.proxy.outbounds.fields = {"protocol";"address";"port";"security";"network";"ps";}
@@ -878,15 +916,24 @@ frmXray.chkAutoTest.oncommand = function(id,event){
 	config.proxy.test = frmXray.chkAutoTest.checked;
 	if(!config.proxy.test) return;
 
+	import inet.http;
 	testTimerId = frmXray.setInterval( 
 		config.proxy.testInterval*1000,function(){
 			if( frmXray.autoTesting ) return;
 			var idx = frmXray.listview.activeOutboundIndex;
 			var address = frmXray.listview.activeOutboundAddress;
-			if( !( idx&&address) ){ return; }
+			if( !( idx&&address) ){ 
+				if(!inet.http.isAlive(,false)){
+					return config.proxy.testInterval*1000;
+				}
+				
+				frmXray.btnTcping.oncommand();
+				return; 
+			}
 			
 			frmXray.autoTesting = true; 
 			activeOutbound(idx,address,true);
+			
 			return config.proxy.testInterval*1000;
 		} 
 	)

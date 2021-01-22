@@ -32,6 +32,10 @@ if(config.proxy.test === null){
 	config.proxy.test = true;
 }
 
+if(config.proxy.autoRefreshSubscription === null){
+	config.proxy.autoRefreshSubscription = true;
+}
+
 if(!config.proxy.testInterval){
 	config.proxy.testInterval = 15;
 }

@@ -479,6 +479,16 @@ winform.editOutbounds.enablePopMenu(function(){
 						winform.editOutbounds.selText = '"path":"/",'
 					} 
 				};
+				{ "HTTP请求方法:httpMethod";
+					function(id){
+						winform.editOutbounds.selText = '"httpMethod":"GET",'
+					} 
+				};
+				{ "HTTP请求头:headers";
+					function(id){
+						winform.editOutbounds.selText = '"headers":{"method":"GET"},'
+					} 
+				};
 				{ "绑定的订阅网址:subscribeUrl";
 					function(id){
 						winform.editOutbounds.selText = '"subscribeUrl":"https://",'
@@ -555,6 +565,8 @@ var editOutboundsTip = {
 	ps = {"备注";"备注"}; 
 	tls = {"是否启用TLS";"可选值为tls,xtls或空值,vless协议省略时默认值为tls"}; 
 	path = {"请求路径";"用于ws,http等协议指定请求路径"}; 
+	httpMethod = {"HTTP请求方法";"用于http协议指定请求方法"}; 
+	headers = {"HTTP请求头";"用于ws,http等协议指定请求头"}; 
 	id = {"密码";"服务器密码"}; 
 	host = {"主机名";"用于指定http,ws等协议请求头中的主机名"}; 
 	protocol = {"协议";"可选值为 vmess,vless,shadowsocks,trojan,trojan-go 之一"}; 
@@ -576,7 +588,7 @@ winform.editOutbounds.wndproc = function(hwnd,message,wParam,lParam){
 		var line = winform.editOutbounds.lineText();
 		var n,v = string.match(line,`^\s*\"(\w+)\"\s*\:\s*(%"")[\,\s]*$`); 
 		if( !n ) n,v = string.match(line,`^\s*\"(\w+)\"\s*\:\s*(\d+)[\,\s]*$`);
-		
+		if( !n ) n,v = string.match(line,`^\s*\"(\w+)\"\s*\:\s*\{`);
 		if(editOutboundsTip[n]){
 			winform.editOutbounds.showInfoTip(editOutboundsTip[n][1],editOutboundsTip[n][2])
 		}

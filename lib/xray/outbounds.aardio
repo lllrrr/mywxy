@@ -195,7 +195,7 @@ importFromString = function(str,subscribeUrl){
 			return;
 		}
 		..publish("uiCommand.subscriptionNew",subscribeUrl);
-
+		
 		var jsonData;
 		if(..string.match(str,"%\[\]") || ..string.match(str,"%\{\}")){
 			jsonData = ..web.json.tryParse(str);
@@ -215,10 +215,10 @@ importFromString = function(str,subscribeUrl){
 	
 	var outbounds = ..table.array();
 	for(line in ..string.lines(str) ){
-		if(#outbounds>=1600){
+		if(#outbounds>=1500){
 			import win.dlg.message;
 			var msgDlg = win.dlg.message(..mainForm); 
-			var form = msgDlg.warn("导入的节点数目过多，已导入1600个节点并中止操作！")
+			var form = msgDlg.warn("导入的节点数目过多，已导入1500个节点并中止操作！")
 		
 			return outbounds;
 		}
@@ -428,6 +428,27 @@ importFromString = function(str,subscribeUrl){
 			continue;
 		}
 		
+		var clashJson = ..string.match(line,`^\s*-\s*(%\{\})\s*$`);
+		if( clashJson ) {
+			var outbound  = ..web.json.tryParse(clashJson)
+			if(type(outbound)=="table"){
+				if(outbound.type){
+					if(outbound.type=="ssr"){
+						continue;						
+					}
+					
+					if(outbound.type=="ss"){
+						outbound.type =	"shadowsocks";
+						outbound.network = "tcp";			
+					}
+					outbound.protocol = outbound.type;
+					outbound.type = null;
+				}
+				if( validOutbound(outbound) ) ..table.push(outbounds,outbound );
+				continue;
+			}
+		}
+		
 		var json = ..string.match(line,`^\s*%\{\}\s*$`);
 		if( json ) {
 			var outbound  = ..web.json.tryParse(json)
@@ -445,7 +466,7 @@ importFromClipboard  = function(){
 	var str = ..win.clip.read();
 	if(!str){ return; }
 	
-	str = ..string.trim(str,'"\'\s\t\r\n ');
+	str = ..string.trim(str,'"\'\t\r\n ');
 	return importFromString(str);
 }
 
@@ -489,9 +510,11 @@ validOutbound = function(outbound){
 		if(outbound.method && outbound.method!="none"){
 			outbound.security = outbound.method;
 		}
-		
-		outbound.method = null;
-		..table.define(outbound);
+		if(outbound.cipher && outbound.cipher!="none" && outbound.cipher!="auto"){
+			outbound.security = outbound.cipher;
+		}
+		outbound.cipher = null;
+		outbound.method = null; 
 	}
 	
 	if(!outbound.address){
@@ -505,6 +528,10 @@ validOutbound = function(outbound){
 		if(outbound.remarks){
 			outbound.ps = outbound.remarks;
 			outbound.remarks = null;
+		}
+		elseif(outbound.name){
+			outbound.ps = outbound.name;
+			outbound.name = null;
 		}
 	} 
  
@@ -534,9 +561,88 @@ validOutbound = function(outbound){
 			outbound.id = outbound.password;
 			outbound.password = null; 
 		} 
+		if(outbound.uuid){
+			outbound.id = outbound.uuid;
+			outbound.uuid = null; 
+		} 
 	}  
 	
+	if(outbound["skip-cert-verify"]){
+		outbound.allowInsecure = outbound["skip-cert-verify"];
+		outbound["skip-cert-verify"] = null;
+	}
+	
+	if(outbound["ws-path"]){
+		outbound.path = outbound["ws-path"];
+		outbound["ws-path"] = null;
+	}
+	
+	if(outbound["ws-headers"]){
+		outbound.headers = outbound["ws-headers"];
+		outbound["ws-headers"] = null; 
+	}
+	
+	if(type(outbound.tls)!="string"){
+		if(outbound.tls) outbound.tls = "tls";
+		else outbound.tls = "";
+	}
+	
+	if(outbound.servername){
+		outbound.host = outbound.servername;
+		outbound.servername = null;
+	}
+	
+	var httpOpts = outbound["http-opts"];  
+	if(httpOpts){
+		if(!..table.count(httpOpts)){
+			httpOpts = outbound["h2-opts"] : httpOpts; 
+		}
+		 
+		if(httpOpts.method){
+			outbound.httpMethod = httpOpts.method;
+		}
+		
+		if(httpOpts.path){
+			outbound.path = httpOpts.path;
+		}
+		
+		if(httpOpts.headers){
+			outbound.headers = httpOpts.headers; 
+		}
+		
+		if(httpOpts.host){
+			outbound.host = httpOpts.host; 
+		}
+	} 
+	
+	if(outbound.headers){
+		var headers = {};
+		for k,v in ..table.eachName(outbound.headers){ 
+			var k = ..string.replace("HOST","(\a)(\a+)",lambda(a,b) ..string.upper(a) + ..string.lower(b) );
+			headers[k] = v;	
+		}
+		outbound.headers = headers;
+		
+		if(outbound.headers.Host){
+			if(outbound.headers.Host==outbound.host){
+				outbound.headers.Host = null;
+			}
+			elseif(!outbound.host){
+				outbound.host = outbound.headers.Host;
+				outbound.headers.Host = null;
+			}
+		}
+		
+		if(!..table.count(outbound.headers)){
+			outbound.headers = null;	
+		}
+	}
+	
+	outbound["http-opts"] = null;
+	outbound["h2-opts"] = null;
+	outbound.country = null;
 	outbound.v = null;
+	
 	..table.define(outbound);
 	
 	if(outbound.address){
@@ -544,71 +650,6 @@ validOutbound = function(outbound){
 	}
 }
 
-
-updateSubscription = function(bySetting){
-    
-	var outbondSubscribeUrlMap = {}
-	var cfg = ..config.proxy.outbounds : ..table.array(); 
-	for(i=#cfg;1;-1){
-		var outbound = cfg[i] 
-		if(outbound.subscribeUrl){
-			outbondSubscribeUrlMap[outbound.subscribeUrl] = true;	
-		}
-	}
-	
-	var cfgSubscribeUrls = ..config.proxy.subscribeUrls;
-	for(i=#cfgSubscribeUrls;1;-1){
-    	var sub = cfgSubscribeUrls[i]  
-    	if(!#sub.url){
-    		continue;
-    	}
-    	
-    	if(sub.checked ===  "启用") {
-    		outbondSubscribeUrlMap[sub.url] = true; 
-    	}
-    	elseif(sub.checked ===  "禁用") {
-    		outbondSubscribeUrlMap[sub.url] = null; 
-    	} 
-	} 
-		
-	if(!..table.count(outbondSubscribeUrlMap)){
-		if(bySetting){ return; }
-		
-		import win.clip;
-		var clibStr = win.clip.read();
-		if( ..string.startWith(clibStr,"http://") || ..string.startWith(clibStr,"https://")  ){
-			outbondSubscribeUrlMap[clibStr] = true;
-		}
-		else {
-			..mainForm.msgWarn('当前配置不包含来自订阅源的服务器,\n请先复制订阅源网址到剪贴板!');
-			return;
-		} 
-	}
-		
-	var count = 0;
-	for(url,v in outbondSubscribeUrlMap){ 
-		var outbounds = ..xray.outbounds.importFromString(url);
-		if(#outbounds){
-			for(i=#cfg;1;-1){
-				var outbound = cfg[i] 
-				if(outbound.subscribeUrl==url){
-					..table.remove(	cfg,i );
-				}
-			}
-			
-			count = count + #outbounds;
-			..table.append(cfg,outbounds);
-		}
-	}
-	
-	..config.proxy.save();
-	if(count){
-		..publish("uiCommand.restartXrayCore",cfg) 	
-	}
-	..mainForm.msgOk("已成功刷新" + count + "个服务器。",1200); 
-	return count;
-}
-
 updateSubscription = function(bySetting){
     
 	var outbondSubscribeUrlMap = {}
@@ -663,6 +704,7 @@ updateSubscription = function(bySetting){
 	}
 	
 	..config.proxy.save();
+	..publish("outbounds.updateConfigJson");
 	..publish("uiCommand.restartXrayCore",cfg) 
 	..mainForm.msgOk("已成功刷新" + count + "个服务器。",1200);
 	return count;
@@ -737,6 +779,7 @@ autoUpdateSubscription = function(){
 	..config.proxy.outbounds = cfg;
 	..config.proxy.save();
 	
+	..publish("outbounds.updateConfigJson");
 	..publish("uiCommand.restartXrayCore")
 	..publish("uiCommand.print","已自动刷新" + count + "个订阅服务器。")
 } )
