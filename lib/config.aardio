@@ -36,7 +36,7 @@ if(!config.proxy.testInterval){
 	config.proxy.testInterval = 15;
 }
 
-if(!config.core.default){
+config.__resetDefaultCore = function(){
 	config.core.default =  {
 		inbounds={
 			{
@@ -56,6 +56,20 @@ if(!config.core.default){
 				};
 				tag="proxy";
 			}; 
+			{
+				listen="127.0.0.1";
+				port=0;
+				protocol="http";
+				settings={};
+				sniffing={
+					destOverride={
+						"http";
+						"tls"
+					};
+					enabled=true
+				};
+				tag="http_proxy"
+			}
 		};
 		log={
 			access="";
@@ -93,7 +107,11 @@ if(!config.core.default){
 				}
 			}
 		};
-	}
+	}	
+}
+
+if(!config.core.default){
+	config.__resetDefaultCore();
 }
 
 if(!config.core.default.inbounds[2]){

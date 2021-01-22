@@ -6,12 +6,12 @@ var winform = win.form(text="winXray - 代理自动配置文件(PAC)";right=912;
 winform.add(
 btnAddDomain={cls="plus";text="添加";left=625;top=25;right=723;bottom=56;align="left";bgcolor=14935259;dr=1;dt=1;font=LOGFONT(h=-13);iconStyle={align="left";font=LOGFONT(h=-13;name='FontAwesome');padding={left=22}};iconText='\uF1C4';notify=1;textPadding={left=40};z=16};
 btnDeleteDomain={cls="plus";text="移除";left=740;top=25;right=838;bottom=56;align="left";bgcolor=14935259;dr=1;dt=1;font=LOGFONT(h=-13);iconStyle={align="left";font=LOGFONT(h=-13;name='FontAwesome');padding={left=22}};iconText='\uF1C4';notify=1;textPadding={left=40};z=17};
-btnReset={cls="plus";text="恢复PAC";left=609;top=763;right=741;bottom=794;align="left";bgcolor=14935259;db=1;dr=1;font=LOGFONT(h=-13);iconStyle={align="left";font=LOGFONT(h=-13;name='FontAwesome');padding={left=22}};iconText='\uF0C7';notify=1;textPadding={left=40};z=9};
+btnReset={cls="plus";text="恢复PAC";left=609;top=763;right=741;bottom=794;align="left";bgcolor=14935259;db=1;dr=1;font=LOGFONT(h=-13);iconStyle={align="left";font=LOGFONT(h=-13;name='FontAwesome');padding={left=22}};iconText='\uF0E2';notify=1;textPadding={left=40};z=9};
 btnSave={cls="plus";text="保存PAC";left=751;top=763;right=883;bottom=794;align="left";bgcolor=11580047;db=1;dr=1;font=LOGFONT(h=-13);iconStyle={align="left";font=LOGFONT(h=-13;name='FontAwesome');padding={left=22}};iconText='\uF0C7';notify=1;textPadding={left=40};z=10};
-btnUpdate={cls="plus";text="同步到网络最新PAC";left=402;top=763;right=599;bottom=794;align="left";bgcolor=14935259;db=1;dr=1;font=LOGFONT(h=-13);iconStyle={align="left";font=LOGFONT(h=-13;name='FontAwesome');padding={left=22}};iconText='\uF1C4';notify=1;textPadding={left=40};z=7};
+btnUpdate={cls="plus";text="同步到网络最新PAC";left=402;top=763;right=599;bottom=794;align="left";bgcolor=14935259;db=1;dr=1;font=LOGFONT(h=-13);iconStyle={align="left";font=LOGFONT(h=-13;name='FontAwesome');padding={left=22}};iconText='\uF26B';notify=1;textPadding={left=40};z=7};
 editPacDirect={cls="richedit";left=8;top=97;right=901;bottom=745;db=1;dl=1;dr=1;dt=1;edge=1;font=LOGFONT(h=-13);hidesel=false;hscroll=1;multiline=1;vscroll=1;z=2};
 editPacDomain={cls="plus";left=91;top=29;right=436;bottom=53;align="right";bgcolor=16777215;border={bottom=1;color=-8355712};dl=1;dr=1;dt=1;editable="edit";font=LOGFONT(h=-16);textPadding={bottom=1};z=12};
-editPacProxy={cls="richedit";left=8;top=97;right=901;bottom=751;db=1;dl=1;dr=1;dt=1;edge=1;font=LOGFONT(h=-13);hidesel=false;hscroll=1;multiline=1;vscroll=1;z=3};
+editPacProxy={cls="richedit";left=8;top=97;right=901;bottom=751;db=1;dl=1;dr=1;dt=1;edge=1;font=LOGFONT(h=-15);hidesel=false;hscroll=1;multiline=1;vscroll=1;z=3};
 groupbox={cls="groupbox";text="域名项";left=8;top=8;right=901;bottom=64;bgcolor=16777215;dl=1;dr=1;dt=1;edge=1;z=1};
 lbTip={cls="plus";text="以下域名通过代理连接（ 点域名绑定上面选项，点击右键菜单可批量导入域名 ）。";left=10;top=66;right=898;bottom=92;align="left";color=3947580;dl=1;dr=1;dt=1;font=LOGFONT(h=-13);notify=1;transparent=1;z=13};
 navDirect={cls="plus";text="直连域名( JSON )";left=184;top=750;right=315;bottom=782;border={top=1;color=-16744448};db=1;dl=1;z=8};
@@ -126,8 +126,14 @@ import xray.pacServer;
 winform.savePacToFile = function(){
 	var proxy =  web.json.tryParse(string.conv.fromWide(winform.editPacProxy.text))
 	var direct =  web.json.tryParse(string.conv.fromWide(winform.editPacDirect.text))
-	if(!(proxy)) return winform.msgErr("代理域名配置格式错误");
-	if(!(direct)) return winform.msgErr("直连域名配置格式错误");
+	if(!(table.isArray(proxy))) {
+		winform.btnSave.disabledText = null;
+		return winform.msgErr("代理域名配置格式错误");
+	}
+	if(!(table.isArray(direct))) {
+		winform.btnSave.disabledText = null;
+		return winform.msgErr("直连域名配置格式错误");
+	}
 	 
 	xray.pacServer.savePacText(web.json.stringify({{direct;proxy}},true));
 	
@@ -136,6 +142,11 @@ winform.savePacToFile = function(){
 
 	..xray.pacServer.updateConfig();
 	sysProxy.reset(true);
+	
+	winform.msgOk("已保存PAC文件",1200);
+	winform.btnSave.disabledText = null;
+	winform.btnSave.disabled = true;
+	winform.btnReset.disabled = true;
 }
 
 winform.btnSave.oncommand = function(id,event){
@@ -143,12 +154,9 @@ winform.btnSave.oncommand = function(id,event){
 
 	thread.invoke( 
 		function(winform){
+			sleep(300)
 			winform.savePacToFile();
-            sleep(300);
-            winform.btnSave.disabledText = null;
-			winform.btnSave.disabled = true;
-			winform.btnReset.disabled = true;
-			winform.msgOk("已保存PAC文件",1200);
+            
 		},winform
 	)
 }
@@ -159,9 +167,8 @@ winform.btnReset.oncommand = function(id,event){
 	thread.invoke( 
 		function(winform){
 			import xray.pacServer;
-			if(str) winform.loadPacToEdit(xray.pacServer.loadPacText());
+			winform.loadPacToEdit(xray.pacServer.loadPacText()); 
 			
-            sleep(500);
             winform.btnReset.disabledText = null;
 			winform.btnSave.disabled = true;
 			winform.btnReset.disabled = true;
@@ -258,6 +265,7 @@ winform.editPacDirect.enablePopMenu(function(){
 				findDlgDirect.replace(winform.editPacDirect.selText);	
 			}
 		}; 
+		{};
 		{ "自剪贴板导入直连域名（支持任意空白分隔符）";
 			function(id){ 
 				var proxy =  web.json.tryParse(string.conv.fromWide(winform.editPacProxy.text))
@@ -293,7 +301,20 @@ winform.editPacDirect.enablePopMenu(function(){
 				winform.msgInfo('已成功导入 '+count+' 个直连域名,\r\n' 
 					+ ignored + '个域名已经是直连域名无需添加。\r\n下一步请点下面的「保存PAC」按钮。',1500);
 			}
-		}  
+		}; 
+		{ "重置为默认PAC";
+			function(id){ 
+				import xray.pacServer;
+				xray.pacServer.resetPac();
+				winform.loadPacToEdit(xray.pacServer.loadPacText());
+			}
+		}; 
+		{ "恢复为当前使用的PAC";
+			function(id){ 
+				import xray.pacServer;
+				winform.loadPacToEdit(xray.pacServer.loadPacText());
+			}
+		}; 
 	}
 	return items;
 });
@@ -310,6 +331,7 @@ winform.editPacProxy.enablePopMenu(function(){
 				findDlgDirect.replace(winform.editPacProxy.selText);	
 			}
 		}; 
+		{};
 		{ "自剪贴板导入代理域名（支持任意空白分隔符）";
 			function(id){ 
 				var proxy =  web.json.tryParse(string.conv.fromWide(winform.editPacProxy.text))
@@ -345,7 +367,20 @@ winform.editPacProxy.enablePopMenu(function(){
 				winform.msgInfo('已成功导入 '+count+' 个代理域名,\r\n' 
 					+ ignored + '个域名已经是代理域名无需添加。\r\n下一步请点下面的「保存PAC」按钮。',1500);
 			}
-		} 
+		};
+		{ "重置为默认PAC";
+			function(id){ 
+				import xray.pacServer;
+				xray.pacServer.resetPac();
+				winform.loadPacToEdit(xray.pacServer.loadPacText());
+			}
+		}; 
+		{ "恢复为当前使用的PAC";
+			function(id){ 
+				import xray.pacServer;
+				winform.loadPacToEdit(xray.pacServer.loadPacText());
+			}
+		}; 
 	}
 	return items;
 });
@@ -372,6 +407,11 @@ winform.btnDeleteDomain.oncommand = function(id,event){
 		return winform.editPacDomain.editBox.showErrorTip(,"请先指定域名")
 	}	
 	
+	var proxy =  web.json.tryParse(string.conv.fromWide(winform.editPacProxy.text))
+	var direct =  web.json.tryParse(string.conv.fromWide(winform.editPacDirect.text))
+	if(!(table.isArray(proxy))) return winform.msgErr("代理域名配置格式错误：不是有效的JSON数组。");
+	if(!(table.isArray(direct))) return winform.msgErr("直连域名配置格式错误：不是有效的JSON数组");
+	
 	if(!table.indexOf(proxy,domain) && !table.indexOf(direct,domain)  ){
 		winform.editPacDomain.editBox.showInfoTip(,"PAC配置不包含此域名")
 		return; 
@@ -391,8 +431,8 @@ winform.btnDeleteDomain.oncommand = function(id,event){
 winform.btnAddDomain.oncommand = function(id,event){
 	var proxy =  web.json.tryParse(string.conv.fromWide(winform.editPacProxy.text))
 	var direct =  web.json.tryParse(string.conv.fromWide(winform.editPacDirect.text))
-	if(!(proxy)) return winform.msgErr("代理域名配置格式错误");
-	if(!(direct)) return winform.msgErr("直连域名配置格式错误");
+	if(!(table.isArray(proxy))) return winform.msgErr("代理域名配置格式错误：不是有效的JSON数组。");
+	if(!(table.isArray(direct))) return winform.msgErr("直连域名配置格式错误：不是有效的JSON数组");
 	
 	var domain = winform.editPacDomain.text;
 	if(!#domain){

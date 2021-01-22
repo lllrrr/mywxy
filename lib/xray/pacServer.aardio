@@ -11,43 +11,37 @@ $serverMain = ..wsock.tcp.simpleHttpServer.mainThread(
 
 		if(request.path=="/proxy.pac"){
             response.contentType = "application/x-ns-proxy-autoconfig";
-
-            if(!..proxPorts){
-				..proxPorts = inboundPort.get(); 
-				if(!..proxPorts[["socksProxy"]]){
-					response.errorStatus(404);
-					return;
-				}
-
-				..pacData = ..string.load(pacPath);
+			
+			var pacData = ..string.load(pacPath);
+			var proxPorts = inboundPort.get();
+			if(!proxPorts[["socksProxy"]]){
+				response.errorStatus(404);
+				return;
 			}
-
+			
 			var reps = ..string.replace(pacData
 				,"var\s+proxy\s+=\s+%''","var proxy = 'SOCKS "
-                    + request.environ.SERVER_NAME +":"+..proxPorts.socksProxy
-                    +";HTTP "+ request.environ.SERVER_NAME +":"+..proxPorts.httpProxy 
-                    +"'"); 
-                    
-            if(!_WIN10_LATER){ 
-				var ua = request.headers[["user-agent"]];
-				if( ua && ..string.find(ua,"MSIE.+Trident\/") ){
-					reps = ..string.replace(pacData,"var\s+proxy\s+=\s+%''","var proxy = 'PROXY "+ request.environ.SERVER_NAME +":"+..proxPorts.httpProxy +"'"); 
-				}
+                    + request.environ.SERVER_NAME +":"+proxPorts.socksProxy
+                    +";PROXY "+ request.environ.SERVER_NAME +":"+proxPorts.httpProxy 
+                    +"'");  
+ 
+            if(useHttpProxy.get()){
+				reps = ..string.replace(pacData,"var\s+proxy\s+=\s+%''","var proxy = 'PROXY "+ request.environ.SERVER_NAME +":"+proxPorts.httpProxy +"'"); 
             }
-
+ 
 			response.write(reps);  
 		}  
-		elseif(request.path=="/update-config"){
-            ..proxPorts = inboundPort.get(); 
-			..pacData = ..string.load(pacPath);
-		} 
 	} 	
 );
 $serverMain.threadNum = 50; 
 
 var pacPath = ..io.appData("/winXray/pac.txt");
-if( ! ..io.exist(pacPath) ){
+resetPac = function(){
 	..string.save(pacPath,$"/pac.txt" )
+}
+
+if( ! ..io.exist(pacPath) ){
+	resetPac();
 }
 
 loadPacText = function(){
@@ -60,10 +54,12 @@ savePacText = function(json){
 }
 
 var inboundPort = ..thread.var();
+var useHttpProxy = ..thread.var();
 restart = function(){  
 	$serverMain.threadGlobal = {
 		inboundPort = inboundPort;
 		pacPath = pacPath;
+		useHttpProxy = useHttpProxy;
 	}
 
 	var pacPort = ..config.proxy.pacPort;
@@ -94,11 +90,14 @@ stop = function(){
 	}
 }
 
+updateUseHttpProxy = function(httpProxy){
+	useHttpProxy.set(httpProxy);
+}
+
 updateConfig = function(socksProxyPort,httpProxyPort){
 	if(socksProxyPort && httpProxyPort){
 		inboundPort.set( {socksProxy=socksProxyPort;httpProxy=httpProxyPort} );
-	}
-	..inet.http().get( $serverMain.getUrl( "/update-config" ) );
+	} 
 }
 
 ..subscribe("xrayCore.restarted",function(socksProxyPort,httpProxyPort){
@@ -132,4 +131,5 @@ restart() = 重启PAC服务器
 getUrl(.(localIp) = 返回PAC服务地址
 getPort() = 返回PAC端口
 updateConfig(.(socksProxyPort,httpProxPort) = 更新代理端口或PAC数据
+resetPac() = 重置为默认PAC
 end intellisense**/

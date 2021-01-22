@@ -8,6 +8,9 @@ namespace xray.core.configJson;
  
 write  = function(jsonPath,outbound,sockPort,httpPort){
     if(!outbound){ return; }
+	if(type(outbound.port)!=type.number){
+		outbound.port = tonumber(outbound.port);
+	}
 	
 	var current = ..table.clone(..config.core.default);
 	var inbounds = current.inbounds;

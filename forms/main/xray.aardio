@@ -122,7 +122,23 @@ Accept-Charset:utf-8;
 	}	
 }
 
+var autoUpdateSubscriptionTimerId; 
+var autoUpdateSubscription = function(...){
+  	..win.clearTimeout(autoUpdateSubscriptionTimerId); 
+  	autoUpdateSubscriptionTimerId = ..win.setTimeout(function(...){
+  		autoUpdateSubscriptionTimerId = null;
+  		
+  		import xray.outbounds;
+		xray.outbounds.autoUpdateSubscription();
+  	},3000,...)
+} 
+
 frmXray.onStartXrayComplete = function(outboundIndex,currentTesting){
+    if(autoUpdateSubscriptionTimerId){
+    	..win.clearTimeout(autoUpdateSubscriptionTimerId); 
+    	autoUpdateSubscriptionTimerId = null;
+    }
+    
 	frmXray.listview.ensureVisible(outboundIndex);
 	
 	for b,v in table.eachIndex(config.proxy.outbounds){
@@ -153,6 +169,7 @@ subscribe("activeOutbound",function(address){
 
 frmXray.onStartXrayFailed = function(outboundIndex,enableRetry){
     ..publish("activeOutbound",false);
+    autoUpdateSubscription();
     
 	frmXray.listview.ensureVisible(outboundIndex);
 	if(frmXray.listview.activeOutboundIndex==outboundIndex){
@@ -297,7 +314,7 @@ frmXray.btnTcping.oncommand = function(id,event){
 			raw.closehandle(h);
 		} 
 		
-		..thread.waitOne(handles);
+		if(#handles) ..thread.waitOne(handles);
 		frmXray.btnTcping.disabledText = null;
 	}
 	else {
@@ -461,7 +478,20 @@ frmXray.listview.onnotify = function(id,code,ptr){
 				});
 				
 				popmenu.add();
-
+				popmenu.add('生成二维码',function(id){
+					if(currentIdx){
+						import xray.outbounds;
+						import win.clip;
+						
+						var str = xray.outbounds.exportSharedLinks({config.proxy.outbounds[currentIdx]});
+						if(str){ 
+							var frmChild = frmXray.loadForm("\forms\main\tools\qr.aardio");
+							frmChild.createQrCode(str);
+							frmChild.show();
+						}  
+					}
+				});
+				
 				popmenu.add('复制服务器分享链接',function(id){
 					if(currentIdx){
 						import xray.outbounds;
@@ -474,6 +504,7 @@ frmXray.listview.onnotify = function(id,code,ptr){
 						}  
 					}
 				});
+				
 				popmenu.add('复制服务器地址',function(id){
 					if(currentIdx){
 						import win.clip;
@@ -570,7 +601,14 @@ frmXray.listview.onnotify = function(id,code,ptr){
 
 subscribe("uiCommand.restartXrayCore",function(){ 
 	config.proxy.outbounds.fields = {"protocol";"address";"port";"security";"network";"ps";}
-	frmXray.listview.setTable(config.proxy.outbounds);	 
+	
+	var outbounds = config.proxy.outbounds;
+	for(i=#outbounds;1;-1){
+		if(type(outbounds[i])!="table"){
+			table.remove(outbounds,i);
+		}
+	}
+	frmXray.listview.setTable(outbounds);	 
 	
 	frmXray.btnTcping.oncommand();
 } )
@@ -578,7 +616,15 @@ subscribe("uiCommand.restartXrayCore",function(){
 import process;
 if(#config.proxy.outbounds){
     config.proxy.outbounds.fields = {"protocol";"address";"port";"security";"network";"ps";}
-	frmXray.listview.setTable(config.proxy.outbounds)
+    
+	var outbounds = config.proxy.outbounds;
+	for(i=#outbounds;1;-1){
+		if(type(outbounds[i])!="table"){
+			table.remove(outbounds,i);
+		}
+	}
+	frmXray.listview.setTable(outbounds);	
+	
 	frmXray.setTimeout( 
 		function(){
 			publish("uiCommand.restartXrayCore");	

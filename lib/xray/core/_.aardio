@@ -21,6 +21,9 @@ var prcsXray;
 import process.job.limitKill;
 restart = function(editor,outbound){
     if(!outbound){ return null,"错误的出站代理服务器配置"  }
+    if(_WINXP){
+    	return null,"抱歉！Xray Core 不支持 Windows XP, 仅支持 Windows 7, Windows 10 以及更新操作系统。";  
+    }
 
 	var inbounds = ..config.core.default[["inbounds"]];
 	if(! (..table.isArray(inbounds) && inbounds[1] ) ){
@@ -55,7 +58,27 @@ restart = function(editor,outbound){
 	
 	import sysProxy;
 	..sysProxy.reset(false);	
-	prcsXray = ..process.popen(corePath,"run","-c=config.json" );
+	
+	var err;
+	prcsXray,err = ..process.popen(corePath,"run","-c=config.json" );
+	if(!prcsXray){
+		..publish("uiCommand.print",err:"启动 Xray Core 时遇到未知错误!");
+		
+		if(!..process().isWow64()){
+			if(..process.isExe(corePath)!="PE32"){
+				..io.remove(corePath);
+				if(!..io.exist(corePath)){
+					..publish("uiCommand.print","当前操作系统是32位，已删除无效的64位 Xray Core，正在下载32位 Xray Core");
+					return restart(editor,outbound)	
+				}
+				else {
+					..publish("uiCommand.print","当前操作系统是32位，但是找到的 Xray Core 是64位，请重新下载32位 Xray Core");
+				} 
+			} 	
+		}
+		
+		return;
+	}
 	prcsXray.assignToJobObject(process.job.limitKill);	
 	prcsXray.logResponse(editor);
 

@@ -1,5 +1,5 @@
 {
 updateUrl="https://raw.githubusercontent.com/winXray/winXray/master/release/update32/";
-description="修正WIN7设置全局代理的问题，增加测速工具。Fixes #1";
+description="发布 v1.6，优化代码修正一处导致PAC代理不可用的BUG。";
 outputDir="/release/update32/"
 }

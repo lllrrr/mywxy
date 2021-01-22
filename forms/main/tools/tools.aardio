@@ -1,19 +1,21 @@
 import fonts.fontAwesome;
 import win.ui;
 /*DSG{{*/
-var winform = win.form(text="aardio form";right=759;bottom=497;bgcolor=16777215)
+var winform = win.form(text="aardio form";right=938;bottom=638;bgcolor=16777215)
 winform.add(
-btnAardio={cls="plus";text="aardio 桌面软件快速开发（ 开发环境仅 6.5MB ）";left=26;top=444;right=460;bottom=486;align="left";color=3947580;dl=1;dt=1;font=LOGFONT(h=-16);iconStyle={align="left";font=LOGFONT(h=-27;name='FontAwesome');padding={left=18}};iconText='\uF17A';notify=1;textPadding={left=50};z=3};
-btnCreateLnk={cls="plus";text="创建桌面图标";left=26;top=161;right=269;bottom=203;align="left";color=3947580;dl=1;dt=1;font=LOGFONT(h=-16);iconStyle={align="left";font=LOGFONT(h=-23;name='FontAwesome');padding={left=18}};iconText='\uF108';notify=1;textPadding={left=50};z=11};
-btnDnsFlush={cls="plus";text="清空DNS缓存";left=26;top=256;right=412;bottom=298;align="left";color=3947580;dl=1;dt=1;font=LOGFONT(h=-16);iconStyle={align="left";font=LOGFONT(h=-27;name='FontAwesome');padding={left=18}};iconText='\uF021';notify=1;textPadding={left=50};z=5};
-btnGitHub={cls="plus";text="github 网速优化";left=26;top=350;right=262;bottom=392;align="left";color=3947580;dl=1;dt=1;font=LOGFONT(h=-16);iconStyle={align="left";font=LOGFONT(h=-27;name='FontAwesome');padding={left=18}};iconText='\uF09B';notify=1;textPadding={left=50};z=2};
+btnAardio={cls="plus";text="aardio 桌面软件快速开发（ 开发环境仅 6.5MB ）";left=26;top=527;right=460;bottom=569;align="left";color=3947580;dl=1;dt=1;font=LOGFONT(h=-16);iconStyle={align="left";font=LOGFONT(h=-27;name='FontAwesome');padding={left=18}};iconText='\uF17A';notify=1;textPadding={left=50};z=3};
+btnCreateLnk={cls="plus";text="创建桌面图标";left=26;top=159;right=269;bottom=201;align="left";color=3947580;dl=1;dt=1;font=LOGFONT(h=-16);iconStyle={align="left";font=LOGFONT(h=-23;name='FontAwesome');padding={left=18}};iconText='\uF108';notify=1;textPadding={left=50};z=11};
+btnDnsFlush={cls="plus";text="清空DNS缓存";left=26;top=251;right=412;bottom=293;align="left";color=3947580;dl=1;dt=1;font=LOGFONT(h=-16);iconStyle={align="left";font=LOGFONT(h=-27;name='FontAwesome');padding={left=18}};iconText='\uF021';notify=1;textPadding={left=50};z=5};
+btnGitHub={cls="plus";text="github 网速优化";left=26;top=343;right=262;bottom=385;align="left";color=3947580;dl=1;dt=1;font=LOGFONT(h=-16);iconStyle={align="left";font=LOGFONT(h=-27;name='FontAwesome');padding={left=18}};iconText='\uF09B';notify=1;textPadding={left=50};z=2};
+btnQrCode={cls="plus";text="二维码生成工具";left=26;top=389;right=262;bottom=431;align="left";color=3947580;dl=1;dt=1;font=LOGFONT(h=-16);iconStyle={align="left";font=LOGFONT(h=-27;name='FontAwesome');padding={left=18}};iconText='\uF029';notify=1;textPadding={left=50};z=15};
 btnSshInstall={cls="plus";text="一键安装 Xray 服务端";left=393;top=18;right=601;bottom=60;align="left";color=3947580;dl=1;dt=1;font=LOGFONT(h=-16);iconStyle={align="left";font=LOGFONT(h=-27;name='FontAwesome');padding={left=11}};iconText='\uF17C';notify=1;textPadding={left=40};z=10};
 btnSshInstallKey={cls="plus";text="安装SSH密钥";left=606;top=19;right=755;bottom=61;align="left";color=3947580;dl=1;dt=1;font=LOGFONT(h=-16);iconStyle={align="left";font=LOGFONT(h=-24;name='FontAwesome');padding={left=11}};iconText='\uF084';notify=1;textPadding={left=40};z=12};
 btnTestSpeed={cls="plus";text="当前代理服务器测速";left=26;top=67;right=244;bottom=109;align="left";color=3947580;dl=1;dt=1;font=LOGFONT(h=-16);iconStyle={align="left";font=LOGFONT(h=-24;name='FontAwesome');padding={left=18}};iconText='\uF0ED';notify=1;textPadding={left=50};z=13};
-btnUpdateSystemTime={cls="plus";text="同步系统时间（ 修正 Xray 连接报错 ）";left=26;top=208;right=412;bottom=250;align="left";color=3947580;dl=1;dt=1;font=LOGFONT(h=-16);iconStyle={align="left";font=LOGFONT(h=-27;name='FontAwesome');padding={left=18}};iconText='\uF017';notify=1;textPadding={left=50};z=4};
-btnUpdateXrayCore={cls="plus";text="更新 Xray Core";left=26;top=114;right=269;bottom=156;align="left";color=3947580;dl=1;dt=1;font=LOGFONT(h=-16);iconStyle={align="left";font=LOGFONT(h=-27;name='FontAwesome');padding={left=18}};iconText='\uF01A';notify=1;textPadding={left=50};z=6};
-btnWubiLex={cls="plus";text="WIN10 五笔助手（仅830KB，自带五笔86、98、091、新世纪、郑码……）";left=26;top=397;right=661;bottom=439;align="left";color=3947580;dl=1;dt=1;font=LOGFONT(h=-16);iconStyle={align="left";font=LOGFONT(h=-24;name='FontAwesome');padding={left=18}};iconText='\uF11C';notify=1;textPadding={left=50};z=7};
-btnYoutube={cls="plus";text="youtube 视频下载工具";left=26;top=303;right=262;bottom=345;align="left";color=3947580;dl=1;dt=1;font=LOGFONT(h=-16);iconStyle={align="left";font=LOGFONT(h=-27;name='FontAwesome');padding={left=18}};iconText='\uF167';notify=1;textPadding={left=50};z=1};
+btnUpdateSystemTime={cls="plus";text="同步系统时间（ 修正 Xray 连接报错 ）";left=26;top=205;right=412;bottom=247;align="left";color=3947580;dl=1;dt=1;font=LOGFONT(h=-16);iconStyle={align="left";font=LOGFONT(h=-27;name='FontAwesome');padding={left=18}};iconText='\uF017';notify=1;textPadding={left=50};z=4};
+btnUpdateXrayCore={cls="plus";text="更新 Xray Core";left=26;top=113;right=269;bottom=155;align="left";color=3947580;dl=1;dt=1;font=LOGFONT(h=-16);iconStyle={align="left";font=LOGFONT(h=-27;name='FontAwesome');padding={left=18}};iconText='\uF01A';notify=1;textPadding={left=50};z=6};
+btnUuid={cls="plus";text="UUID 生成工具";left=26;top=435;right=262;bottom=477;align="left";color=3947580;dl=1;dt=1;font=LOGFONT(h=-16);iconStyle={align="left";font=LOGFONT(h=-27;name='FontAwesome');padding={left=18}};iconText='\uF13E';notify=1;textPadding={left=50};z=16};
+btnWubiLex={cls="plus";text="WIN10 五笔助手（仅830KB，自带五笔86、98、091、新世纪、郑码……）";left=26;top=481;right=661;bottom=523;align="left";color=3947580;dl=1;dt=1;font=LOGFONT(h=-16);iconStyle={align="left";font=LOGFONT(h=-24;name='FontAwesome');padding={left=18}};iconText='\uF11C';notify=1;textPadding={left=50};z=7};
+btnYoutube={cls="plus";text="youtube 视频下载工具";left=26;top=297;right=262;bottom=339;align="left";color=3947580;dl=1;dt=1;font=LOGFONT(h=-16);iconStyle={align="left";font=LOGFONT(h=-27;name='FontAwesome');padding={left=18}};iconText='\uF167';notify=1;textPadding={left=50};z=1};
 editSshHost={cls="plus";left=158;top=27;right=386;bottom=51;align="left";bgcolor=16777215;border={bottom=1;color=-8355712};dl=1;dt=1;editable="edit";font=LOGFONT(h=-16);textPadding={bottom=1};z=8};
 lbCurrentProxyLocation={cls="static";left=245;top=80;right=729;bottom=107;color=32768;dl=1;dt=1;transparent=1;z=14};
 static={cls="static";text="账号@服务器：";left=36;top=31;right=151;bottom=58;align="right";color=4934475;dl=1;dt=1;font=LOGFONT(h=-13);transparent=1;z=9}
@@ -251,6 +253,20 @@ subscribe("activeOutbound",function(address){
 } )
 if(globalActiveOutbound){
 	onActiveOutbound(globalActiveOutbound)	
+}
+
+winform.btnQrCode.skin(style.plainButton)
+winform.btnQrCode.oncommand = function(id,event){
+
+	var frmChild = winform.loadForm("\forms\main\tools\qr.aardio");
+	frmChild.show();
+	
+}
+
+winform.btnUuid.skin(style.plainButton)
+winform.btnUuid.oncommand = function(id,event){
+	var frmChild = winform.loadForm("\forms\main\tools\uuid.aardio");
+	frmChild.show();
 }
 
 winform.enableDpiScaling();

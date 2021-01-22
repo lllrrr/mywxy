@@ -1,44 +1,15 @@
 # winXray 
 本软件源码已贡献到公共领域并放弃版权，源码可使用 [aardio（开发环境仅6.5MB）](http://www.aardio.com) 编译生成单文件绿色EXE( 不需要.Net等任何外部运行库 ），**[点这里下载](https://raw.githubusercontent.com/winXray/winXray/master/release/winXray.7z)** （ [64位版本](https://raw.githubusercontent.com/winXray/winXray/master/release/winXray.7z) / [32位版本](https://raw.githubusercontent.com/winXray/winXray/master/release/winXray32.7z) ），解压即可直接使用( 仅  **[5.0MB](https://raw.githubusercontent.com/winXray/winXray/master/release/winXray.7z)** - 已自带 Xray-core）。
 
-winXray[:loud_sound:](http://dict.youdao.com/dictvoice?audio=winxray&type=2) 是一个简洁稳定的 [Xray/V2Ray(vmess/vless/xtls)、Shadowsocks、Trojan](https://github.com/XTLS/Xray-core) 通用客户端（Windows系统），可自动检测并连接访问速度最快的代理服务器。服务器连接异常时可以自动更换代理服务器 - 再也不用担心服务器抽风了。winXray 也提供一键安装 XRay(V2Ray、Shadowsocks、Trojan) 服务器工具。  
-  
-这里说明一下，简洁不等于功能弱。一般人只是为了上个网加个速用不上太复杂的小众功能。太复杂同时就会带来不稳定、且不必要的占用资源并同时降低性能，所以 winXray 做了大量的优化、精简，但是并没有减少主要的、必要的代理服务器功能。  
-  
-<details>  <summary>最新公益服务器列表</summary>  <pre>
-vless://bf4a6c2b-db1b-57de-f45a-364aa254d1f7@z.vulvpstech.xyz:443/?flow=xtls-rprx-direct&host=z.vulvpstech.xyz&tls=xtls#%E7%BE%8E%E5%9B%BD%E8%A5%BF%E9%9B%85%E5%9B%BE_XTLS%2FDirect
-vless://904da8f7-a5af-3c34-3f3d-c3b2ea59bde8@q.vulvpstech.xyz:443/?host=q.vulvpstech.xyz&tls=xtls#%E7%BE%8E%E5%9B%BD%E6%B4%9B%E6%9D%89%E7%9F%B6_XTLS%2FDirect
-</pre></details>    
-
-<details>  <summary>vless 分享链接格式说明：</summary>  <pre>
-vless目前没有分享链接标准，这会给我们带来较大的麻烦，所以 win2ray 制定了一个分享链接格式，  
-其实这种格式应当尽可能的简单，我个人觉得 vmess 的链接就把简单的事搞复杂了，如发明了太多新名词以及莫名其妙不直观不必要的BASE64。
-所以简洁直观、最少的说明文字是制定 vless分享链接格式 的唯一指导原则。
-
-## 分享链接格式：
-vless://服务器密码@域名或IP:端口?flow=&tls=&network=&security=&sni=&host=&path=&allowInsecure=&alpn=&disableSessionResumption=#服务器描述
-
-?后的所有URL参数遵守URL规范进行URL编码，  
-URL参数中的所有字段基本都是可选字段，字段名与JSON配置使用的字段名完全一致。  
-各参数字段的具体作用请参考配置编辑器说明（鼠标点字段名可以看到提示）以及Xray/V2ray官方文档。
-
-个别字段的默认值下面解释一下：
- 
-### flow 参数
-流控参数，可选，不指定时默认值为 "xtls-rprx-direct",
-
-### tls 参数
-可选参数为 "tls"或 "xtls"，不指定时默认值为 "tls"
-
-## host 参数
-伪装域名，不指定时使用服务器域名或IP
-
-## sni 参数
-TLS服务器名，不指定时使用host字段值，如果host也没有指定，使用服务器域名或IP
-</pre></details>    
+winXray[:loud_sound:](http://dict.youdao.com/dictvoice?audio=winxray&type=2) 是一个简洁稳定的 [Xray/V2Ray(vmess/vless/xtls)、Shadowsocks、Trojan](https://github.com/XTLS/Xray-core) 通用客户端（Windows系统），可自动检测并连接访问速度最快的代理服务器。服务器连接异常时可以自动更换代理服务器 - 再也不用担心服务器抽风了。winXray 也提供一键安装 XRay(V2Ray、Shadowsocks、Trojan) 服务器工具。   
 
 之前我用过很多代理客户端，经常用一会就挂掉了，有些测试很久才找到下一个可用的服务器，有时怎么切换都不行，一定要把整个软件退出重启才能恢复。而且在WIN10上都有相同的BUG:PAC代理用一段时间就会卡死( winXray已经通过自行实现PAC服务器解决了这个问题 )，其实这些软件里提供的很多功能我并不需要，我只想愉快地用下 google 找点技术资料提升工作效率。但是在网上找了很久都没找到适合的软件，于是决定自己动手写一个，还好用 aardio 写软件的速度很快 - 大概用了几个小时就完成了 winXray 的主要代码，改进了几个版本以后就很稳定了，**我自己用了 winXray  几个月再也没有遇到 google 抽风访问不了的问题**。    
 
+这里说明一下:一些网友对测速功能存在误解，有一些软件提供的测速其实没有什么实用价值，例如Ping通了TCP访问不了，TCP通了但浏览器被阻断，或者下载测速需要连接代理服务器以后长时间测试才能得到下载速度 - 这显然也没有什么实用价值。如果这些软件能用我就不会自己花力气来写 winXray了。**根据我长时间的实测，我使用一堆的服务器，大多时候 winXray 都能最快的找到其中速度最快、且能正常使用的CN2 GIA线路**（ 有一些人认为响应速度与网络速度无关这基本是胡扯，你可以试试国内国外服务器响应速度会差多少 ）。
+
+要考虑到网络速度与服务器响应速度本来就是波动的，**winXray 需要在连接代理服务器以前在零点几秒以内快速地在上百个代理服务器中找出最快的服务器**，尤其是在国外服务器大规模抽风不稳定的时期帮助我们节省选择服务器的时间。如果你牛逼到有一堆流畅看4K的代理服务器、并且从来没有遇到过抽风和访问异常，那你真是太幸福了恭喜你，但很可惜我们这里没有这种幸福的网络环境。虽然大家很喜欢用4K视频来做测试，但是我们大多时候使用  winXray 这种软件不是为了一天到晚看 4K 视频，而是为了找点技术资料或者工作需要，例如上 github 拉个源码，有个几MB的下载速度我们做梦都能笑醒了。如果你跟我一样有这样的需求，那 winXray 就是为你准备的。
+
+另外有某些代理软件不支持PAC，就把PAC贬低得一无是处，连跳过局域网这种理由都能写出来，这种我个人觉得基本没有解释的意义。很多时候你判断一个功能好不好用，要实际去使用 - 苹果的味道要自己试过才知道，而不是看了几篇文章想当然的跟着喷。不要想当然的认为复杂臃肿的软件就一定更好用，**代理软件本身就应当保持简洁，不应当搞成什么插件平台、做得比操作系统还复杂。大多时候，PAC对于我们来说 - 简单、粗暴、够用！！！**
 
 ![winXray](./screenshots/winXray.png)
 
@@ -57,3 +28,5 @@ winXray支持批量导入 vless、vmess、ss、trojan、trojan-go …… 等格�
 发行文件仅需要 "./winXray.exe"，可选带上 "./xray-core/" 目录（ 如果没有找到会自动到v2ray官网下载，不过没有代理服务器下载有时候非常慢 )。
 
 ![端口配置](./screenshots/config.advanced.png)
+
+<img src="./screenshots/telegram.gif" width="1031" alt="Telegram 端口配置">
