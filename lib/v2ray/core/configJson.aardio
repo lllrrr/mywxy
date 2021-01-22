@@ -24,7 +24,7 @@ write  = function(jsonPath,outbound,sockPort,httpPort){
 	
 
 	if(sockPort<0){
-		..table.shift(inbounds); //当前为SSR连接
+		..table.shift(inbounds); 
 	}
 	
 	if(#outbound.tls && !outbound.sni){

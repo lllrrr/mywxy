@@ -1,6 +1,11 @@
 //此触发器在生成EXE以后执行
+
 import ide;
 import fsys; 
+import console;
+if( !console.askYesNo('是否生成 winXray.7z,winXray32.7z ? 按Y键继续,按N键取消') ){
+    return console.close();
+}
 
 //获取生成的EXE文件路径
 var publishFile = ide.getPublishPath();
@@ -32,3 +37,4 @@ sevenZip.cmd.compress( io.joinpath(tempDir,"*")
     )   
 
 fsys.delete(tempDir);
+console.close();

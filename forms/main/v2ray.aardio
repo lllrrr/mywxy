@@ -70,16 +70,17 @@ var activeOutbound = function(outboundIndex,outboundAddress,enableRetry){
 				import web.rest.client;
 				var restClient = web.rest.client(,httpProxyAddress);
 				restClient._http.setTimeouts(1000,2000,2000);
-				restClient.get("https://www.google.com/generate_204");
+				var ret = restClient.get("https://www.google.com/generate_204");
 				var lastStatusCode = restClient.lastStatusCode;
+				
 				if( lastStatusCode == 204 ){
-					frmXray.onStartXrayComplete(outboundIndex,currentTesting,outboundAddress);
+					frmXray.onStartXrayComplete(outboundIndex,currentTesting,outboundAddress); 
 					return;	
 				}
 				restClient.close();
 				
 				if(currentTesting){
-					sleep(500);
+					sleep(100);
 				}
 				
 				import inet.http;
@@ -89,14 +90,14 @@ var activeOutbound = function(outboundIndex,outboundAddress,enableRetry){
 				}
 				
 				if(currentTesting){
-					sleep(500);
+					sleep(100);
 				}
 				
 				import wsock.tcp.socks5Client;
 				
 				var client;
 				for(i=1;2;1){
-					sleep(500);
+					sleep(200);
 					client = wsock.tcp.socks5Client("127.0.0.1",sockProxyPort); 
 					if(client)break;
 				}
@@ -126,7 +127,7 @@ Accept-Charset:utf-8;
 				};
 				frmXray.onStartXrayFailed(outboundIndex,enableRetry,outboundAddress);
 			},frmXray,outboundIndex,outboundAddress, 
-			v2ray.core.socksProxyPort,v2ray.core.getHttpProxyAddress(),enableRetry,currentTesting
+			v2ray.core.socksProxyPort,v2ray.core.getSystemProxyConfig(),enableRetry,currentTesting
 		)
 
 		return true;
@@ -593,29 +594,10 @@ frmXray.listview.onnotify = function(id,code,ptr){
 						activeOutbound(currentIdx,frmXray.listview.getItemText(currentIdx,2),false)
 					}
 				});
+
+				popmenu.add();
 			}
 			 
-		
-			var autoConnect = config.proxy.outbounds[currentIdx].autoConnect!==false; 
-			var id = popmenu.add('允许自动测速并连接',function(id){
-				if(currentIdx){
-					for(i=#selectedItems;1;-1){ 
-						var item = selectedItems[i];
-						if(autoConnect === false){
-							config.proxy.outbounds[item].autoConnect = null;
-							frmXray.listview.setItemText("",item,7);
-						}
-						else {
-							config.proxy.outbounds[item].autoConnect = false;
-							frmXray.listview.setItemText("禁止测速",item,7);
-						}
-					}
-				}
-			});
-			popmenu.check(id,autoConnect,0/*_MF_BYCOMMAND*/); 
-
-			popmenu.add();
-		
 			popmenu.add("编辑 / 新增代理服务器",function(id){ 
 				var frmOutbound = frmXray.loadForm("\forms\main\outbound.aardio");
 				frmOutbound.setOutboundConfig(config.proxy.outbounds[currentIdx]);
@@ -657,6 +639,25 @@ frmXray.listview.onnotify = function(id,code,ptr){
 			});	
 			 
 			popmenu.add()
+
+			var autoConnect = config.proxy.outbounds[currentIdx].autoConnect!==false; 
+			var id = popmenu.add('允许自动测速并连接',function(id){
+				if(currentIdx){
+					for(i=#selectedItems;1;-1){ 
+						var item = selectedItems[i];
+						if(autoConnect === false){
+							config.proxy.outbounds[item].autoConnect = null;
+							frmXray.listview.setItemText("",item,7);
+						}
+						else {
+							config.proxy.outbounds[item].autoConnect = false;
+							frmXray.listview.setItemText("禁止测速",item,7);
+						}
+					}
+				}
+			});
+			popmenu.check(id,autoConnect,0/*_MF_BYCOMMAND*/); 
+			popmenu.add()
 			
 			popmenu.add('删除服务器',function(id){
 				removeOutbounds(selectedItems);
@@ -680,7 +681,7 @@ frmXray.listview.onnotify = function(id,code,ptr){
 					publish("outbounds.updateConfigJson");
 					publish("uiCommand.restartV2RayCore");
 				}
-			); 
+			);  
 			 
 			if(#selectedItems==1){	
 		 
@@ -745,8 +746,16 @@ frmXray.listview.onnotify = function(id,code,ptr){
 						process.execute("cmd.exe","/k tracert " + config.proxy.outbounds[currentIdx].address);
 					}
 				});
+
+				if(config.proxy.outbounds[currentIdx].port == 443 && config.proxy.outbounds[currentIdx].tls){
+					toolMenu.add('浏览 HTTPS 主页 ...',function(id){
+						if(currentIdx){
+							process.openUrl("https" ++ "://" + config.proxy.outbounds[currentIdx].address); 
+						}
+					});	 
+				}
 				
-				popmenu.add("服务器检测工具",toolMenu)
+				popmenu.add("服务器工具",toolMenu)
 				
 				popmenu.add('SSH 登录服务器',function(id){
 					if(currentIdx){
@@ -759,16 +768,7 @@ frmXray.listview.onnotify = function(id,code,ptr){
 							+ config.proxy.outbounds[currentIdx].address + ":" 
 							+ (config.proxy.outbounds[currentIdx].sshPort||22));
 					}
-				});
-				
-				if(config.proxy.outbounds[currentIdx].port == 443 && config.proxy.outbounds[currentIdx].tls){
-					popmenu.add('浏览 HTTPS 主页 ...',function(id){
-						if(currentIdx){
-							process.openUrl("https" ++ "://" + config.proxy.outbounds[currentIdx].address); 
-						}
-					});	
-					popmenu.add();
-				}
+				});  
 			}
 			popmenu.popup(x,y,true);
 		}

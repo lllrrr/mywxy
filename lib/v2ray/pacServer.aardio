@@ -61,7 +61,7 @@ savePacText = function(json){
 var inboundPort = ..thread.var();
 var useHttpProxy = ..thread.var();
 restart = function(){
-	useHttpProxy.set(..config.proxy.useHttpGlobal);
+	useHttpProxy.set(!..config.proxy.useSocksPac);
 
 	$serverMain.threadGlobal = {
 		inboundPort = inboundPort;

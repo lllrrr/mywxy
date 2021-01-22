@@ -1,5 +1,6 @@
 ﻿//内核进程
 import v2ray.core.ssr;
+import v2ray.core.naive;
 import wsock.tcp.server;
 import process.popen;
 import config;
@@ -9,7 +10,7 @@ namespace v2ray.core;
 socksProxyPort = null;
 httpProxPort = null;
 
-getHttpProxyAddress = function(){
+getSystemProxyConfig = function(){
     if(!(socksProxyPort&&httpProxPort)){ return null; }
 	return ..config.proxy.useHttpGlobal ? ("127.0.0.1:" + httpProxPort ): ("SOCKS=127.0.0.1:"+socksProxyPort)  
 } 
@@ -49,10 +50,17 @@ restart = function(editor,outbound){
 		return false,"启动失败,未找到 v2ray.exe"; 
 	}  
 	
+	// 先不要断开当前代理，使用当前代理下载会更快。
 	if( outbound.protocol == "ssr" ){ 
 		if(!..v2ray.core.ssr.getPath(editor.hwnd)){
 			v2RayStarting = false;
 			return false,"启动失败,未找到 SSR Core";
+		}
+	}
+	if( outbound.protocol == "naive" ){ 
+		if(!..v2ray.core.naive.getPath(editor.hwnd)){
+			v2RayStarting = false;
+			return false,"启动失败,未找到 NaïveProxy Core";
 		}
 	}
 	
@@ -67,21 +75,17 @@ restart = function(editor,outbound){
 	if( (! httpProxPort) || httpProxPort >=  49152 ){ httpProxPort = ..wsock.tcp.server.getFreePort("127.0.0.1",1082,10802,10812,44822) }
 	
 	if(prcsV2Ray){
-		// SSR 重用 V2Ray 进程，以加快切换速度
-		if( (outbound.protocol != "ssr" )
-			|| (prcsV2Ray.socksProxyPort != -1)
-			|| (prcsV2Ray.httpProxPort != httpProxPort)
-				){
-			prcsV2Ray.terminate();
-			prcsV2Ray = null;
-		} 
+		prcsV2Ray.terminate();
+		prcsV2Ray = null;
 	}
 	
 	..v2ray.core.ssr.stop();
+	..v2ray.core.naive.stop();
 	
-	var ssrProxy = outbound.protocol == "ssr";
-	if( ssrProxy ){  
-		if(!..v2ray.core.ssr.restart(editor,outbound,socksProxyPort)){
+	var nexCore;
+	if( outbound.protocol == "ssr" ){  
+		var nextProxyPort = ..wsock.getFreePort();
+		if(!..v2ray.core.ssr.restart(editor,outbound,nextProxyPort)){
 			v2RayStarting = false;
 			return false,"SSR Core 启动失败";
 		}
@@ -89,8 +93,25 @@ restart = function(editor,outbound){
 		outbound = {
 			protocol = "socks";
 			address = "127.0.0.1";
-			port = socksProxyPort;
+			port = nextProxyPort;
 		} 
+		
+		nexCore = ..v2ray.core.ssr;
+	}
+	elseif( outbound.protocol == "naive" ){  
+		var nextProxyPort = ..wsock.getFreePort();
+		if(!..v2ray.core.naive.restart(editor,outbound,nextProxyPort)){
+			v2RayStarting = false;
+			return false,"SSR Core 启动失败";
+		}
+
+		outbound = {
+			protocol = "socks";
+			address = "127.0.0.1";
+			port = nextProxyPort;
+		} 
+		
+		nexCore = ..v2ray.core.naive;
 	}
 
 	if( ! prcsV2Ray ){ 
@@ -98,13 +119,11 @@ restart = function(editor,outbound){
 		import v2ray.core.configJson;
 		var jsonPath,err = ..v2ray.core.configJson.write(
 			..io.joinpath(..io.splitpath(corePath).dir,"config.json")
-			,outbound,(ssrProxy)?-1:socksProxyPort,httpProxPort);
+			,outbound,socksProxyPort,httpProxPort);
 	
 		if(!jsonPath){
-			if( ssrProxy ){
-				..v2ray.core.ssr.stop();
-			}
-	
+			if( nexCore ){ nexCore.stop(); } 
+			
 			v2RayStarting = false;
 			return false,err:"启动失败,写入配置文件遇到错误！"; 
 		}
@@ -112,9 +131,7 @@ restart = function(editor,outbound){
 		var err;
 		prcsV2Ray,err = ..process.popen(corePath,"-c=config.json" );
 		if(!prcsV2Ray){
-			if( ssrProxy ){
-				..v2ray.core.ssr.stop();
-			}
+			if( nexCore ){ nexCore.stop(); }
 	
 			..publish("uiCommand.print",err:"启动 V2Ray Core 时遇到未知错误!");
 			
@@ -137,10 +154,7 @@ restart = function(editor,outbound){
 		}
 		prcsV2Ray.assignToJobObject(process.job.limitKill);
 		prcsV2Ray.codepage = 65001;	
-		prcsV2Ray.logResponse(editor); 
-		
-		prcsV2Ray.socksProxyPort = (ssrProxy)?-1:socksProxyPort;
-		prcsV2Ray.httpProxPort = httpProxPort;
+		prcsV2Ray.logResponse(editor);  
 		
 		inbounds[1].port = socksProxyPort;
 		inbounds[2].port = httpProxPort;

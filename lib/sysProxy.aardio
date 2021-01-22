@@ -22,7 +22,7 @@ switch = function(mode){
 	}
 	elseif(mode=="proxy"){ 
 		import v2ray.core;
-		var address = v2ray.core.getHttpProxyAddress(); 
+		var address = v2ray.core.getSystemProxyConfig(); 
 		
 		if(address){
 			..inet.conn.setProxy(,address);  

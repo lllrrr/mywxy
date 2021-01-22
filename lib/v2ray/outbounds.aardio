@@ -34,7 +34,7 @@ exportSharedLinks = function(outbounds){
 		} 
 		elseif(outbound.protocol == "socks"){
 			var ss;
-			if(outbound.id) ss = outbound.protocol + "://" + outbound.id + "@" + outbound.address + ":" + outbound.port;
+			if(outbound.id) ss = outbound.protocol + "://" + ..inet.url.encode(outbound.id) + "@" + outbound.address + ":" + outbound.port;
 			else ss = outbound.protocol + "://" + outbound.address + ":" + outbound.port;
 			..table.push(outString,ss);
 		} 
@@ -61,7 +61,7 @@ exportSharedLinks = function(outbounds){
 		}  
 		elseif(outbound.protocol == "trojan"  || outbound.protocol == "trojan-go"){
 			var trojan;
-			if(outbound.id) trojan = outbound.protocol + "://" + outbound.id + "@" + outbound.address + ":" + outbound.port;
+			if(outbound.id) trojan = outbound.protocol + "://" + ..inet.url.encode(outbound.id) + "@" + outbound.address + ":" + outbound.port;
 			else trojan = outbound.protocol + "://" + outbound.address + ":" + outbound.port;
 				
 			var info = {};
@@ -81,8 +81,8 @@ exportSharedLinks = function(outbounds){
 		} 
 		elseif(outbound.protocol == "vless"){
 			var vless;
-			if(outbound.id) vless = "vless://" + outbound.id + "@" + outbound.address + ":" + outbound.port;
-			else vless = "vless://" + outbound.id + "@" + outbound.address + ":" + outbound.port;
+			if(outbound.id) vless = "vless://" + ..inet.url.encode(outbound.id) + "@" + outbound.address + ":" + outbound.port;
+			else vless = "vless://" + outbound.address + ":" + outbound.port;
 			
 			var info = {};
 			if(outbound.network!="tcp") info.type = outbound.network ;
@@ -107,6 +107,33 @@ exportSharedLinks = function(outbounds){
 				vless = vless + "#" + ..inet.url.encode(outbound.ps);
 			} 
 			..table.push(outString,vless);
+		} 
+		elseif(outbound.protocol == "naive"){
+			var urlInfo = {
+				host = outbound.address;
+				port = outbound.port;
+				scheme = "naive+"+outbound.network;
+				location = outbound.ps;
+			}
+			
+			if(outbound.headers){
+				urlInfo.extraInfo ={
+					["extra-headers"] = outbound.headers
+				}
+			}
+			
+			if(outbound.id){
+				var u,p = ..string.match(outbound.id,"([^\:]+)\:([^\:]+)")
+				if(u && p){
+					urlInfo.user = u;
+					urlInfo.password = p;
+				}
+				else {
+					urlInfo.user = outbound.id;
+				} 
+			} 
+  
+			..table.push(outString,..inet.url.stringify(urlInfo));
 		} 
 	}	
 	
@@ -303,7 +330,7 @@ importFromString = function(str,subscribeUrl){
 			continue;
 		}
 		
-		var vmess2 = ..string.match(line,`vmess\:\/\/[^\@\s]+\@[^\?\#\s\:]+\:\d+\S*`);
+		var vmess2 = ..string.match(line,`vmess\:\/\/[^\@\s]+\@[^\?\#\s\:]+<\:\d+>*\S*`);
 		if( vmess2 ) {
 			var vmessUrl = ..inet.url.split(vmess2) 
 			if(vmessUrl.user && vmessUrl.host && vmessUrl.port){
@@ -380,7 +407,7 @@ importFromString = function(str,subscribeUrl){
 			continue;
 		}
 		
-		var vless = ..string.match(line,`vless\:\/\/[^\@\s]+\@[^\?\#\s\:]+\:\d+\S*`);
+		var vless = ..string.match(line,`vless\:\/\/\S+`);
 		if( vless ) {
 			var vlessUrl = ..inet.url.split(vless) 
 			if(vlessUrl.user && vlessUrl.host && vlessUrl.port){
@@ -473,10 +500,10 @@ importFromString = function(str,subscribeUrl){
 			continue;
 		}
 
-		var trojan = ..string.match(line,`trojan\:\/\/[^\@\s]+\@[^\?\#\s\:]+\:\d+\S*`);
+		var trojan = ..string.match(line,`trojan\:\/\/\S+`);
 		if( trojan ) {
 			var trojanUrl = ..inet.url.split(trojan) 
-			if(trojanUrl.user && trojanUrl.host && trojanUrl.port){
+			if(trojanUrl.user && trojanUrl.host){
 				var outbound = {
 					address = trojanUrl.host;
 					port = tonumber(trojanUrl.port) : 443; 
@@ -513,10 +540,10 @@ importFromString = function(str,subscribeUrl){
 			continue;
 		}
 
-		var trojan = ..string.match(line,`trojan-go\:\/\/[^\@\s]+\@[^\?\#\s\:]+\:\d+\S*`);
+		var trojan = ..string.match(line,`trojan-go\:\/\/\S+`);
 		if( trojan ) {
 			var trojanUrl = ..inet.url.split(trojan) 
-			if(trojanUrl.user && trojanUrl.host && trojanUrl.port){
+			if(trojanUrl.user && trojanUrl.host){
 				var outbound = {
 					address = trojanUrl.host;
 					port = tonumber(trojanUrl.port) : 443; 
@@ -530,6 +557,7 @@ importFromString = function(str,subscribeUrl){
 					outbound.sni = info.sni || info.peer;
 					outbound.host = info.host;
 					outbound.path = info.path;
+					outbound.allowInsecure = info.allowinsecure;
 					
 					if(info.type && info.type!=="original"){
 						outbound.network = info.type;
@@ -594,13 +622,13 @@ importFromString = function(str,subscribeUrl){
 			}
 		}
 
-		var socks = ..string.match(line,`socks\:\/\/[^\@\s]+\@[^\?\#\s\:]+\:\d+\S*`);
+		var socks = ..string.match(line,`socks\:\/\/\S+`);
 		if( socks ) {
 			var socksUrl = ..inet.url.split(trojan) 
 			if( socksUrl.host && socksUrl.port){
 				var outbound = {
 					address = socksUrl.host;
-					port = tonumber(socksUrl.port) : 443;
+					port = tonumber(socksUrl.port);
 					network = "tcp";
 					protocol = "socks"
 				};
@@ -611,6 +639,39 @@ importFromString = function(str,subscribeUrl){
 				
 				if(socksUrl.location){
 					outbound.ps = ..inet.url.decode(socksUrl.location);
+				}
+	
+				outbound.subscribeUrl = subscribeUrl;
+				..table.push(outbounds,outbound);
+			} 
+			
+			continue;
+		}
+
+		var naive,naiveNetwork = ..string.match(line,`(naive\+(\w+)\:\/\/\S+)`);
+		if( naive ) {
+			var naiveUrl = ..inet.url.split(naive) 
+			if( naiveUrl.host ){
+				var outbound = {
+					address = naiveUrl.host;
+					port = tonumber(naiveUrl.port) : 443; 
+					id = naiveUrl.user;
+					network = naiveNetwork;
+					protocol = "naive"
+				};
+				
+				if(naiveUrl.user && naiveUrl.password){
+					outbound.id = naiveUrl.user +":"+ naiveUrl.password
+				} 
+				
+				if(naiveUrl.extraInfo){
+					var info = ..inet.url.splitParameters(naiveUrl.extraInfo);
+					if(info["extra-headers"]){
+						outbound.headers = info["extra-headers"];
+					}
+				} 
+				if(naiveUrl.location){
+					outbound.ps = ..inet.url.decode(naiveUrl.location);
 				}
 	
 				outbound.subscribeUrl = subscribeUrl;

@@ -175,7 +175,7 @@ updateCore = function(){
 	}
 	
 	import fsys;
-	fsys.delete(..io.appData("/v2ray/temp/"))
+	fsys.delete(..io.appData("/v2ray/temp/ssr/"))
  
 	import zlib.httpFile;
 	if( ..zlib.httpFile.download(url,"正在下载 SSR Core（ShadowsocksR-native），版本：" + versionTag
