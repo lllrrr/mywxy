@@ -7,7 +7,7 @@ winform.add(
 bk={cls="bk";left=0;top=0;right=659;bottom=34;bgcolor=12632256;z=8};
 cmbIpCidrs={cls="combobox";left=49;top=111;right=328;bottom=137;edge=1;items={};mode="dropdown";z=1};
 editIpCurrent={cls="edit";left=118;top=206;right=366;bottom=230;edge=1;z=5};
-plusExploreHosts={cls="plus";text='\uF07C 浏览hosts文件';left=450;top=204;right=607;bottom=235;bgcolor=-6371181;font=LOGFONT(h=-15;name='FontAwesome';charset=0);notify=1;z=7};
+plusExploreHosts={cls="plus";text='\uF07C 编辑hosts文件';left=450;top=204;right=607;bottom=235;bgcolor=-6371181;font=LOGFONT(h=-15;name='FontAwesome';charset=0);notify=1;z=7};
 plusUpdateDns={cls="plus";text='\uF0AD 更改github.com解析到选定IP / 并更新图像等服务器IP';left=77;top=158;right=563;bottom=189;bgcolor=-6371181;font=LOGFONT(h=-15;name='FontAwesome';charset=0);notify=1;z=3};
 plusUpdateIps={cls="plus";text='\uF021 获取最新IP列表 / 测速';left=345;top=108;right=607;bottom=139;bgcolor=-6371181;font=LOGFONT(h=-15;name='FontAwesome';charset=0);notify=1;z=2};
 static={cls="static";text="本工具使用github官网接口优化http协议访问官网速度（ 适用于无代理连接 ）。";left=49;top=50;right=635;bottom=86;font=LOGFONT(h=-13);transparent=1;z=4};
@@ -31,6 +31,8 @@ import wsock;
 import fsys.config;
 config  = fsys.config( io.appData("/aardio/github-ip-tools/") ); 
 winform.plusUpdateIps.oncommand = function(id,event){
+    winform.editIpCurrent.text = wsock.getIp("www.github.com")
+
 	winform.plusUpdateIps.disabledText = {'\uF254';'\uF251';'\uF252';'\uF253';'\uF250'}
 	winform.text = "请稍候，正在测试github.com所有可用IP的响应速度"
 
@@ -134,8 +136,6 @@ Accept-Charset:utf-8;
 	winform.cmbIpCidrs.selIndex = 1;
 	winform.cmbIpCidrs.onListChange();
 	
-	winform.editIpCurrent.text = wsock.getIp("www.github.com")
-
 	winform.text = "github.com 网速优化工具"
 	winform.plusUpdateIps.disabledText = null;
 }
@@ -206,7 +206,7 @@ winform.plusExploreHosts.skin(
 )
 winform.plusExploreHosts.oncommand = function(id,event){
 	import process;
-	process.exploreSelect(fsys.hosts.path)
+	process.execute("notepad.exe",fsys.hosts.path,"runas")
 }
 
 winform.plusUpdateDns.skin({

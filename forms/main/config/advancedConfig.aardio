@@ -288,7 +288,7 @@ fsys.update.simpleMain.onStatusChanged(function(version,description,status){
 	elseif(status=="failed"){
 		winform.lnkVersion.disabledText = null; 
 		..publish("uiCommand.print",description);
-		..publish("uiCommand.print","建议在「工具」中运行「github优化工具」修复无法访问 raw.githubusercontent.com 的问题。");
+		..publish("uiCommand.print","建议在「工具」中运行「github优化工具」修复无法访问 raw.githubusercontent.com 的问题。"); 
 	}
 })
 

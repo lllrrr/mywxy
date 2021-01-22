@@ -5,7 +5,7 @@ var winform = win.form(text="aardio form";right=892;bottom=709;bgcolor=16777215)
 winform.add(
 btnAdd={cls="plus";text="添加订阅";left=10;top=1;right=143;bottom=28;align="left";dl=1;dt=1;font=LOGFONT(h=-15);iconStyle={align="left";font=LOGFONT(h=-13;name='FontAwesome');padding={left=12}};iconText='\uF196 ';notify=1;textPadding={left=30};z=5};
 btnRemove={cls="plus";text="移除选中订阅";left=143;top=1;right=276;bottom=28;align="left";dl=1;dt=1;font=LOGFONT(h=-15);iconStyle={align="left";font=LOGFONT(h=-13;name='FontAwesome');padding={left=12}};iconText='\uF014';notify=1;textPadding={left=30};z=6};
-btnUpdate={cls="plus";text="更 新";left=580;top=654;right=683;bottom=690;align="left";bgcolor=11580047;db=1;dr=1;font=LOGFONT(h=-13);iconStyle={align="left";font=LOGFONT(h=-13;name='FontAwesome');padding={left=22}};iconText='\uF0C7';notify=1;textPadding={left=40};z=1};
+btnUpdate={cls="plus";text="更 新";left=578;top=654;right=681;bottom=690;align="left";bgcolor=11580047;db=1;dr=1;font=LOGFONT(h=-13);iconStyle={align="left";font=LOGFONT(h=-13;name='FontAwesome');padding={left=22}};iconText='\uF0C7';notify=1;textPadding={left=40};z=1};
 chkAll={cls="plus";text="全部启用";left=11;top=628;right=118;bottom=659;align="left";bgcolor=16777215;db=1;dl=1;font=LOGFONT(h=-16);iconStyle={align="left";font=LOGFONT(h=-16;name='FontAwesome')};iconText='\uF0C8';notify=1;textPadding={left=19};z=3};
 chkAutoRefreshSubscription={cls="plus";text="允许出站服务器异常自动刷新订阅";left=11;top=663;right=527;bottom=694;align="left";bgcolor=16777215;db=1;dl=1;dr=1;font=LOGFONT(h=-16);iconStyle={align="left";font=LOGFONT(h=-16;name='FontAwesome')};iconText='\uF0C8';notify=1;textPadding={left=19};z=2};
 listview={cls="listview";left=10;top=34;right=883;bottom=609;db=1;dl=1;dr=1;dt=1;edge=1;fullRow=1;gridLines=1;z=4};
@@ -38,11 +38,11 @@ var reloadSubscriptions = function(){
     	}
 	}
 	
-	var cfg = ..config.proxy.outbounds : ..table.array(); 
+	var outbounds = ..config.proxy.outbounds : ..table.array(); 
  
 	var outbondSubscribeUrlMap = {};
-	for(i=#cfg;1;-1){
-    	var outbound = cfg[i] 
+	for(i=#outbounds;1;-1){
+    	var outbound = outbounds[i] 
     	if(outbound.subscribeUrl){ 
         	outbondSubscribeUrlMap[outbound.subscribeUrl] = true;	 
     	}
@@ -84,8 +84,19 @@ winform.loadSubscriptionsOnce = function(){
 	winform.loadSubscriptionsOnce = function(){};
 }
 
-subscribe("uiCommand.subscriptionUpdated",function(){
-	reloadSubscriptions();	
+subscribe("uiCommand.subscriptionNew",function(url){
+	var cfgSubscribeUrls = config.proxy.subscribeUrls;
+	for(i=#cfgSubscribeUrls;1;-1){
+    	var sub = cfgSubscribeUrls[i]  
+    	if(sub.url==url){ 
+    		winform.listview.setChecked(i,true);
+    		return;
+    	}
+	} 
+		
+	..table.push(cfgSubscribeUrls,{url=url;ps="";checked="启用"})
+	var item = winform.listview.addItem({"","启用","",url});
+	winform.listview.setChecked(item,true);
 } ) 
 
 //编辑变更值会触发下面的事件
@@ -121,12 +132,12 @@ winform.btnUpdate.oncommand = function(id,event){
 	} 
 	
 	var removed = 0;
-    var cfg = ..config.proxy.outbounds : ..table.array();
-	for(i=#cfg;1;-1){
-    	var outbound = cfg[i]  
+    var outbounds = ..config.proxy.outbounds : ..table.array();
+	for(i=#outbounds;1;-1){
+    	var outbound = outbounds[i]  
     	if(outbound.subscribeUrl){ 
     		if(!outbondSubscribeUrlMap[outbound.subscribeUrl]){
-    			table.remove(cfg,i);
+    			table.remove(outbounds,i);
         		removed++;	
     		}
     	}
@@ -135,7 +146,7 @@ winform.btnUpdate.oncommand = function(id,event){
 	 
 	import xray.outbounds;
 	if(!xray.outbounds.updateSubscription(true)){
-		if(removed) publish("uiCommand.restartXrayCore",cfg) 
+		if(removed) publish("uiCommand.restartXrayCore",outbounds) 
 	}
 	
 	winform.btnUpdate.disabledText = null;

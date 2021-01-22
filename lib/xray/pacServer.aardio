@@ -19,12 +19,7 @@ $serverMain = ..wsock.tcp.simpleHttpServer.mainThread(
 				return;
 			}
 			
-			var reps = ..string.replace(pacData
-				,"var\s+proxy\s+=\s+%''","var proxy = 'SOCKS "
-                    + request.environ.SERVER_NAME +":"+proxPorts.socksProxy
-                    +";PROXY "+ request.environ.SERVER_NAME +":"+proxPorts.httpProxy 
-                    +"'");  
- 
+			var reps = ..string.replace(pacData,"var\s+proxy\s+=\s+%''","var proxy = 'SOCKS "+ request.environ.SERVER_NAME +":"+proxPorts.socksProxy +"'"); 
             if(useHttpProxy.get()){
 				reps = ..string.replace(pacData,"var\s+proxy\s+=\s+%''","var proxy = 'PROXY "+ request.environ.SERVER_NAME +":"+proxPorts.httpProxy +"'"); 
             }
