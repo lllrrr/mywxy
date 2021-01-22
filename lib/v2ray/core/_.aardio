@@ -203,6 +203,17 @@ getPath = function(hwnd){
 	if(..io.exist(path)){
 		return path;
 	}
+
+	var path = ..io.fullpath("/xray-core/xray.exe");
+	if(..io.exist(path)){
+		..io.rename("/xray-core/","/v2ray-core/") 
+	}
+
+	var path = ..io.fullpath("/v2ray-core/xray.exe");
+	if(..io.exist(path)){
+		..io.rename("/v2ray-core/xray.exe","/v2ray-core/v2ray.exe")
+		return ..io.fullpath("/v2ray-core/v2ray.exe");
+	}
 	
 	if(self.lastDownloadingCoreFailed){
 		return;

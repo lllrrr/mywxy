@@ -1,8 +1,8 @@
 {
-    "description":"发布v3.1, 支持 V2Ray / Xray Core 一键切换。",
+    "description":"发布 v3.2 优化 SSR 配置参数等",
     "format":".lzma",
     "main":"\\winXray.exe",
     "updater":"\\winXray.exe",
     "url":"https://raw.githubusercontent.com/winXray/winXray/master/release/update/",
-    "version":"3.1"
+    "version":"3.2"
 }
