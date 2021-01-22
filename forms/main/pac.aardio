@@ -93,20 +93,16 @@ winform.loadPacToEdit = function(str){
 	winform.editPacDirect.text = web.json.stringify(direct,true)
 }
 
+
 winform.btnUpdate.oncommand = function(id,event){
 	winform.btnUpdate.disabledText = {'\uF254';'\uF251';'\uF252';'\uF253';'\uF250'};
  
 	thread.invoke( 
-		function(winform){
-			import crypt;
-			import web.rest.jsonLiteClient;
-			
-			var http = web.rest.jsonLiteClient();
-			var github = http.api("https://api.github.com");
-			
-			var result = github.repos["petronny"]["gfwlist2pac"].contents["gfwlist.pac"].get();
-			if(result[["content"]] && result[["encoding"]]=="base64"){
-				winform.loadPacToEdit( crypt.decodeBin(result[["content"]]) );
+		function(winform){ 
+			import web.rest.github; 
+			var result = web.rest.github.getContent("petronny","gfwlist2pac","gfwlist.pac");
+			if( result ){
+				winform.loadPacToEdit( result );
 				winform.editPacDirect.modified = true;
 				winform.btnSave.disabled = false;
 				winform.btnReset.disabled = false;

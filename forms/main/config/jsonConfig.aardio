@@ -105,7 +105,7 @@ winform.btnUpdate.oncommand = function(id,event){
 		else {
 			var outbounds = xray.outbounds.importFromString(winform.editOutbounds.text);
 			config.proxy.outbounds = outbounds : ..table.array(); 
-			winform.editOutbounds.text = web.json.stringifyArray(outbounds,true);
+			winform.editOutbounds.text = web.json.stringifyArray(outbounds,true,false,true);
 		}
 		
 		config.proxy.save();
@@ -185,7 +185,7 @@ winform.editOutbounds.enablePopMenu(function(){
 							} 
 							
 							..table.append(cfg,outbounds);
-							winform.editOutbounds.text = ..web.json.stringifyArray(cfg,true);
+							winform.editOutbounds.text = ..web.json.stringifyArray(cfg,true,false,true);
 						}
 						else {
 							var str = xray.outbounds.exportSharedLinks(outbounds);
@@ -203,7 +203,7 @@ winform.editOutbounds.enablePopMenu(function(){
 						return; 
 					}
 		
-					winform.msgFrown('未导入服务器！ \r\n请先复制一个或多个以下格式服务器分享链接：\r\n\r\nvmess:// 链接\r\nvless:// 链接\r\nss:// 链接\r\ntrojan:// 链接\r\ntrojan-go:// 链接\r\nhttp:// 或 https:// 通用订阅源！\r\n订阅源也可返回winXray格式的配置JSON。')
+					winform.msgFrown('未导入服务器！ \r\n请先复制一个或多个以下格式服务器分享链接：\r\n\r\nvmess:// 链接\r\nvless:// 链接\r\nss:// 链接\r\ntrojan:// 链接\r\ntrojan-go:// 链接\r\nhttp:// 或 https:// 通用订阅源！\r\n\r\n订阅源可直接返回winXray格式的配置JSON。\n订阅源地址可以直接指定github项目网址（兼容raw,blob格式）。')
 				} 
 			};  
 		}
@@ -258,7 +258,7 @@ winform.editOutbounds.enablePopMenu(function(){
 						}
 					}
 					
-					winform.editOutbounds.text = ..web.json.stringifyArray(cfg,true);
+					winform.editOutbounds.text = ..web.json.stringifyArray(cfg,true,false,true);
 						
 					winform.msgOk("已成功刷新" + count + "个服务器,请点击「更新设置」启用新配置。",1200);
 					winform.editOutbounds.modified = true;
@@ -310,7 +310,7 @@ winform.editOutbounds.enablePopMenu(function(){
 					import web.json;
 					var outbounds = xray.outbounds.importFromString(strEditBounds);
 					if(outbounds){ 
-						winform.editOutbounds.text = web.json.stringifyArray(outbounds,true);
+						winform.editOutbounds.text = web.json.stringifyArray(outbounds,true,false,true);
 						winform.editOutbounds.modified = true;
 					} 
 				} 
@@ -336,7 +336,7 @@ winform.editOutbounds.enablePopMenu(function(){
 				var path = fsys.dlg.save("*.json|*.json||","另存为 json 文件",,winform)
 				if(path){
 					var str = web.json.stringifyArray( 
-						config.proxy.outbounds,true
+						config.proxy.outbounds,true,false,true
 					)
 					
 					string.save(path,str )
@@ -347,7 +347,7 @@ winform.editOutbounds.enablePopMenu(function(){
 		table.push(menu,{ "另存为默认服务器列表(JSON)";
 			function(id){
 				var str = web.json.stringifyArray( 
-					config.proxy.outbounds,true
+					config.proxy.outbounds,true,false,true
 				)
 				
 				string.save("/xray-core/winXray-default-servers.json",str );
@@ -361,7 +361,7 @@ winform.editOutbounds.enablePopMenu(function(){
 				function(id){
 					winform.btnUpdate.disabledText = {'\uF254';'\uF251';'\uF252';'\uF253';'\uF250'}
 					winform.editOutbounds.text = web.json.stringifyArray( 
-						config.proxy.outbounds,true
+						config.proxy.outbounds,true,false,true
 					)
 					winform.editOutbounds.modified = false;
 					
@@ -519,14 +519,14 @@ subscribe("outbounds.updateConfigJson",function(){
 	}
 	
 	winform.editOutbounds.text = web.json.stringifyArray( 
-		config.proxy.outbounds,true
+		config.proxy.outbounds,true,false,true
 	)
 	
 	winform.editOutbounds.modified = false;
 } )
 
 winform.editOutbounds.text = web.json.stringifyArray( 
-		config.proxy.outbounds ,true
+		config.proxy.outbounds,true,false,true
 ) : "[]"
 winform.editOutbounds.modified = false;
 

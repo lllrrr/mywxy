@@ -87,6 +87,7 @@ importFromString = function(str,subscribeUrl){
 	
 	var jsonData;
 	if(..string.match(str,"%\[\]") || ..string.match(str,"%\{\}")){
+		if(subscribeUrl)_subscriptionResponseCache[subscribeUrl] = ..string.crc32(str);
 		jsonData = ..web.json.tryParse(str);
 	}
 	
@@ -95,6 +96,8 @@ importFromString = function(str,subscribeUrl){
 			if( !validOutbound(jsonData[i]) ) {
 				..table.remove(jsonData,i);
 			} 
+
+			if(subscribeUrl)jsonData[i].subscribeUrl = subscribeUrl;
 		}
 		
 		return jsonData;
@@ -138,13 +141,17 @@ importFromString = function(str,subscribeUrl){
 					outbound.method = null;
 				}
 				
+				if(subscribeUrl)outbound.subscribeUrl = subscribeUrl;
 				..table.push(outbounds,outbound);
 			}
 			
 			return outbounds;
 		}
 		else {
-			if( validOutbound(jsonData) ) return {jsonData};
+			if( validOutbound(jsonData) ) {
+				if(subscribeUrl)jsonData.subscribeUrl = subscribeUrl;
+				return {jsonData};
+			}
 		} 
 	}
 	
@@ -171,7 +178,13 @@ importFromString = function(str,subscribeUrl){
 		str = ..win.invoke(
 			function(subscribeUrl){
 				import inet.http; 
-				return inet.http().get(subscribeUrl); 
+				import web.rest.github;
+				if( string.indexOf(subscribeUrl,"github.com") ){
+					var ret = web.rest.github.getContent(subscribeUrl)
+					if(ret) return ret;
+				}
+
+				return inet.http().get(subscribeUrl);
 			},subscribeUrl 
 		)
 		
@@ -179,8 +192,16 @@ importFromString = function(str,subscribeUrl){
 		if(!str){
 			return;
 		}
+		..publish("uiCommand.subscriptionNew",subscribeUrl);
 
-		..publish("uiCommand.subscriptionNew",subscribeUrl)
+		var jsonData;
+		if(..string.match(str,"%\[\]") || ..string.match(str,"%\{\}")){
+			jsonData = ..web.json.tryParse(str);
+		}
+		
+		if( type(jsonData) === type.table ){   
+			return importFromString(str,subscribeUrl);
+		}
 	}
 	
 	if(subscribeUrl)_subscriptionResponseCache[subscribeUrl] = ..string.crc32(str);

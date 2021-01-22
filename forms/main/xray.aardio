@@ -698,7 +698,7 @@ frmXray.btnImportServerFromClipBd.oncommand = function(id,event){
 		return; 
 	}
 
-	frmXray.msgFrown('未导入服务器！ \r\n请先复制一个或多个以下格式服务器分享链接：\r\n\r\nvmess:// 链接\r\nvless:// 链接\r\nss:// 链接\r\ntrojan:// 链接\r\ntrojan-go:// 链接\r\nhttp:// 或 https:// 通用订阅源！\r\n订阅源也可返回winXray格式的配置JSON。')
+	frmXray.msgFrown('未导入服务器！ \r\n请先复制一个或多个以下格式服务器分享链接：\r\n\r\nvmess:// 链接\r\nvless:// 链接\r\nss:// 链接\r\ntrojan:// 链接\r\ntrojan-go:// 链接\r\nhttp:// 或 https:// 通用订阅源！\r\n\r\n订阅源可直接返回winXray格式的配置JSON。\n订阅源地址可以直接指定github项目网址（兼容raw,blob格式）。')
 }
 
 var testTimerId;

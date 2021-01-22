@@ -32,12 +32,7 @@ grid.readonlyColums = { [1] = true;[2] = true };
 import config;
 var reloadSubscriptions = function(){
 	winform.chkAutoRefreshSubscription.checked = config.proxy.autoRefreshSubscription; 
-	if(!config.proxy.subscribeUrls){
-    	config.proxy.subscribeUrls = {
-        	fields =  {"";"checked";"ps";"url";}
-    	}
-	}
-	
+	config.proxy.subscribeUrls.fields =  {"";"checked";"ps";"url";} 
 	var outbounds = ..config.proxy.outbounds : ..table.array(); 
  
 	var outbondSubscribeUrlMap = {};
