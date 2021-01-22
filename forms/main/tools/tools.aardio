@@ -240,7 +240,7 @@ winform.btnTestSpeed.oncommand = function(id,event){
 	
 	import process
 	process.execute(chromePath,` --proxy-server="SOCKS5://127.0.0.1:`+xray.core.socksProxyPort 
-		+`" --user-data-dir="` +io.appData("winXray/speed.cloudflare")+ `" --app="https://speed.cloudflare.com/"`);
+		+`" --user-data-dir="` +io.appData("winXray/chrome-socks5")+ `" --app="https://speed.cloudflare.com/"`);
 	winform.btnTestSpeed.disabledText = null;
 }
 

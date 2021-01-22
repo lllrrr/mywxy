@@ -164,7 +164,9 @@ importFromString = function(str,subscribeUrl){
 		} 
 	}
 	
-	if( ..string.startWith(str,"http://") || ..string.startWith(str,"https://")  ){
+	if( ..string.startWith(str,"http://") 
+		|| ..string.startWith(str,"https://") 
+		|| ..string.match(str,"^\s*/\N+\s*$")  ){
 		
 		import win.dlg.message;
 		var msgDlg = win.dlg.message(..mainForm); 
@@ -183,12 +185,24 @@ importFromString = function(str,subscribeUrl){
 		form.progress.startProgress(50); 
 		
 		subscribeUrl = str;
+		if(..string.match(subscribeUrl,"^\s*/\N+\s*$") ){
+			if(!..string.find(subscribeUrl,"/<blob>|<raw>")){
+				subscribeUrl = ..inet.url.append("https://raw.githubusercontent.com",subscribeUrl);
+			}
+			else {
+				subscribeUrl = ..inet.url.append("https://github.com",subscribeUrl);
+			}
+		}
+		
 		str = ..win.invoke(
 			function(subscribeUrl){
 				import inet.http; 
 				import web.rest.github;
-				if( string.indexOf(subscribeUrl,"github.com") ){
-					var ret = web.rest.github.getContent(subscribeUrl)
+				if( string.indexOf(subscribeUrl,"github.com")
+					|| string.indexOf(subscribeUrl,"raw.githubusercontent.com") 
+					){
+					
+					var ret  = web.rest.github.getContent(subscribeUrl)
 					if(ret) return ret;
 				}
 
@@ -214,11 +228,15 @@ importFromString = function(str,subscribeUrl){
 		if(!existIndex){
 			var tUrl = ..inet.url.split(subscribeUrl); 
 			..table.push(cfgSubscribeUrls,{url=subscribeUrl;ps=tUrl ? tUrl.host : "";checked="启用"})
+			..publish("uiCommand.subscriptionNew",cfgSubscribeUrls[#cfgSubscribeUrls]);
 		}  
+		else{
+			..publish("uiCommand.subscriptionNew",cfgSubscribeUrls[existIndex],existIndex);
+		}
 		..config.proxy.subscribeUrls = cfgSubscribeUrls;
 		..config.proxy.save();
 		
-		..publish("uiCommand.subscriptionNew",subscribeUrl,existIndex);
+		
 		
 		var jsonData;
 		if(..string.match(str,"%\[\]") || ..string.match(str,"%\{\}")){
@@ -750,18 +768,9 @@ updateSubscription = function(outbondSubscribeUrlMap){
 		}
 			
 		if(!..table.count(outbondSubscribeUrlMap)){ 
-			import win.clip;
-			var clibStr = win.clip.read();
-			if( ..string.startWith(clibStr,"http://") || ..string.startWith(clibStr,"https://")  ){
-				outbondSubscribeUrlMap[clibStr] = true;
-			}
-			else {
-				..mainForm.msgWarn('当前未启用任何订阅源,\n请先复制订阅源网址到剪贴板!');
-				return;
-			} 
+			..mainForm.msgWarn('当前未启用任何订阅源,\n请先复制订阅源网址到剪贴板然后点击「批量导入链接」!');
+			return;
 		}
-		
-		
 	}
 	
 	var count = 0; 
@@ -809,11 +818,20 @@ autoUpdateSubscription = function(){
 	..thread.invoke( 
 		function(winform,outbondSubscribeUrlMap,responseCache){
 			import inet.http;
-			var http = inet.http();
+			import web.rest.github;
 			
-			var updated = {}
+			var http = inet.http();
 			for(url,v in outbondSubscribeUrlMap){ 
-				outbondSubscribeUrlMap[url] = http.get(url);
+				
+				if( string.indexOf(subscribeUrl,"github.com")
+					|| string.indexOf(subscribeUrl,"raw.githubusercontent.com") 
+					){
+					outbondSubscribeUrlMap[url] = web.rest.github.getContent(url)
+				}
+				else{
+					outbondSubscribeUrlMap[url] = http.get(url);
+				}
+				
 				if(!outbondSubscribeUrlMap[url]){
 					continue;
 				}

@@ -32,8 +32,7 @@ switch = function(mode){
 	else {
 		..inet.conn.setProxy();
 		..xray.github.setProxy(false);	
-	}
-		
+	} 
 	..publish("sysProxy.modeChanged",mode)
 } 
 
@@ -58,7 +57,7 @@ reset = function(proxy){
 		return;
 	}
 	
-		..inet.conn.setProxy();
+	..inet.conn.setProxy();
 	switch(..config.proxy.mode); 
 } 
 

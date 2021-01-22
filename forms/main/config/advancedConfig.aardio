@@ -1,33 +1,34 @@
 import fonts.fontAwesome;
 import win.ui;
 /*DSG{{*/
-var winform = win.form(text="aardio form";right=938;bottom=638;bgcolor=16777215)
+var winform = win.form(text="aardio form";right=938;bottom=604;bgcolor=16777215)
 winform.add(
-btnOpenFirewall={cls="plus";text="设置防火墙";left=511;top=442;right=641;bottom=472;align="left";db=1;dl=1;font=LOGFONT(h=-13);iconStyle={align="left";font=LOGFONT(h=-13;name='FontAwesome');padding={left=12}};iconText='\uF09C';notify=1;textPadding={left=30};z=7};
-btnUpdate={cls="plus";text="保 存";left=516;top=563;right=619;bottom=599;align="left";bgcolor=11580047;db=1;dl=1;font=LOGFONT(h=-13);iconStyle={align="left";font=LOGFONT(h=-13;name='FontAwesome');padding={left=22}};iconText='\uF0C7';notify=1;textPadding={left=40};z=5};
-chkEnableGitConfigGithub={cls="plus";text="设置 git 客户端启用 github.com 代理提速（支持https、ssh协议）";left=302;top=481;right=818;bottom=512;align="left";bgcolor=16777215;db=1;dl=1;font=LOGFONT(h=-16);iconStyle={align="left";font=LOGFONT(h=-16;name='FontAwesome')};iconText='\uF0C8';notify=1;textPadding={left=19};z=13};
-chkLan={cls="plus";text="允许来自局域网的连接";left=302;top=441;right=509;bottom=472;align="left";bgcolor=16777215;db=1;dl=1;font=LOGFONT(h=-16);iconStyle={align="left";font=LOGFONT(h=-16;name='FontAwesome')};iconText='\uF0C8';notify=1;textPadding={left=19};z=1};
-chkSystemStart={cls="plus";text="允许开机启动 winXray";left=302;top=521;right=818;bottom=552;align="left";bgcolor=16777215;db=1;dl=1;font=LOGFONT(h=-16);iconStyle={align="left";font=LOGFONT(h=-16;name='FontAwesome')};iconText='\uF0C8';notify=1;textPadding={left=19};z=17};
-editHttpPort={cls="plus";left=304;top=198;right=384;bottom=222;align="left";bgcolor=16777215;border={bottom=1;color=-8355712};db=1;dl=1;editable="edit";font=LOGFONT(h=-16);textPadding={bottom=1};z=14};
-editLanPacUrl={cls="plus";left=306;top=382;right=725;bottom=406;align="left";bgcolor=16777215;border={bottom=1;color=-8355712};db=1;dl=1;editable="edit";font=LOGFONT(h=-16);textPadding={bottom=1};z=11};
-editPacPort={cls="plus";left=304;top=290;right=384;bottom=314;align="left";bgcolor=16777215;border={bottom=1;color=-8355712};db=1;dl=1;editable="edit";font=LOGFONT(h=-16);textPadding={bottom=1};z=2};
-editPacUrl={cls="plus";left=304;top=337;right=723;bottom=361;align="left";bgcolor=16777215;border={bottom=1;color=-8355712};db=1;dl=1;editable="edit";font=LOGFONT(h=-16);textPadding={bottom=1};z=8};
-editSocksPort={cls="plus";left=304;top=159;right=384;bottom=183;align="left";bgcolor=16777215;border={bottom=1;color=-8355712};db=1;dl=1;editable="edit";font=LOGFONT(h=-16);textPadding={bottom=1};z=3};
-lbMaxTestServers={cls="static";text="100";left=590;top=128;right=926;bottom=154;bgcolor=16777215;db=1;dl=1;font=LOGFONT(h=-13);transparent=1;z=25};
-lbTestInterval={cls="static";text="15秒";left=590;top=91;right=788;bottom=117;bgcolor=16777215;db=1;dl=1;font=LOGFONT(h=-13);transparent=1;z=20};
-lnkVersion={cls="plus";text="正在检查新版本";left=19;top=607;right=380;bottom=638;align="left";color=8388608;db=1;dl=1;font=LOGFONT(h=-13);iconColor=2960685;iconStyle={align="left";font=LOGFONT(h=-16;name='FontAwesome')};iconText='\uF021';notify=1;paddingLeft=20;z=10};
-radioHttpGlobal={cls="plus";text="全局/PAC 默认使用HTTP代理";left=246;top=241;right=491;bottom=272;align="left";bgcolor=16777215;db=1;dl=1;font=LOGFONT(h=-16);iconStyle={align="left";font=LOGFONT(h=-16;name='FontAwesome')};iconText='\uF111 ';notify=1;textPadding={left=19};z=21};
-radioSocksGlobal={cls="plus";text="全局/PAC 默认使用SOCKS代理";left=491;top=241;right=750;bottom=272;align="left";bgcolor=16777215;db=1;dl=1;font=LOGFONT(h=-16);iconStyle={align="left";font=LOGFONT(h=-16;name='FontAwesome')};iconText='\uF111 ';notify=1;textPadding={left=19};z=22};
-static={cls="static";text="SOCKS 代理服务端口：";left=94;top=163;right=292;bottom=189;align="right";bgcolor=16777215;db=1;dl=1;font=LOGFONT(h=-16);transparent=1;z=4};
-static2={cls="static";text="PAC 端口：";left=162;top=295;right=292;bottom=321;align="right";bgcolor=16777215;db=1;dl=1;font=LOGFONT(h=-16);transparent=1;z=6};
-static3={cls="static";text="本机 PAC 地址：";left=134;top=342;right=292;bottom=368;align="right";bgcolor=16777215;db=1;dl=1;font=LOGFONT(h=-16);transparent=1;z=9};
-static4={cls="static";text="局域网 PAC 地址：";left=134;top=388;right=292;bottom=414;align="right";bgcolor=16777215;db=1;dl=1;font=LOGFONT(h=-16);transparent=1;z=12};
-static5={cls="static";text="HTTP/HTTPS 代理服务端口：";left=34;top=202;right=292;bottom=228;align="right";bgcolor=16777215;db=1;dl=1;font=LOGFONT(h=-16);transparent=1;z=15};
-static6={cls="static";text="支持 SOCKS4、SOCKS4A、SOCKS5";left=392;top=163;right=679;bottom=189;bgcolor=16777215;color=5921370;db=1;dl=1;font=LOGFONT(h=-13);transparent=1;z=16};
-static7={cls="static";text="检测服务器异常间隔时间：";left=47;top=85;right=292;bottom=111;align="right";bgcolor=16777215;db=1;dl=1;font=LOGFONT(h=-16);transparent=1;z=19};
-static8={cls="static";text="允许同时测速的服务器数目：";left=47;top=124;right=292;bottom=150;align="right";bgcolor=16777215;db=1;dl=1;font=LOGFONT(h=-16);transparent=1;z=24};
-tbMaxTestServers={cls="plus";left=304;top=130;right=585;bottom=142;bgcolor=-2512093;border={radius=-1};color=23807;db=1;dl=1;foreRight=13;forecolor=-14911489;notify=1;paddingBottom=5;paddingTop=5;z=23};
-tbTestInterval={cls="plus";left=304;top=92;right=585;bottom=104;bgcolor=-2512093;border={radius=-1};color=23807;db=1;dl=1;foreRight=13;forecolor=-14911489;notify=1;paddingBottom=5;paddingTop=5;z=18}
+btnOpenFirewall={cls="plus";text="设置防火墙";left=511;top=424;right=641;bottom=454;align="left";db=1;dl=1;font=LOGFONT(h=-13);iconStyle={align="left";font=LOGFONT(h=-13;name='FontAwesome');padding={left=12}};iconText='\uF09C';notify=1;textPadding={left=30};z=7};
+btnUpdate={cls="plus";text="保 存";left=516;top=545;right=619;bottom=581;align="left";bgcolor=11580047;db=1;dl=1;font=LOGFONT(h=-13);iconStyle={align="left";font=LOGFONT(h=-13;name='FontAwesome');padding={left=22}};iconText='\uF0C7';notify=1;textPadding={left=40};z=5};
+chkEnableGitConfigGithub={cls="plus";text="设置 git 客户端启用 github.com 代理提速（支持https、ssh协议）";left=302;top=463;right=818;bottom=494;align="left";bgcolor=16777215;db=1;dl=1;font=LOGFONT(h=-16);iconStyle={align="left";font=LOGFONT(h=-16;name='FontAwesome')};iconText='\uF0C8';notify=1;textPadding={left=19};z=13};
+chkLan={cls="plus";text="允许来自局域网的连接";left=302;top=423;right=509;bottom=454;align="left";bgcolor=16777215;db=1;dl=1;font=LOGFONT(h=-16);iconStyle={align="left";font=LOGFONT(h=-16;name='FontAwesome')};iconText='\uF0C8';notify=1;textPadding={left=19};z=1};
+chkSystemStart={cls="plus";text="允许开机启动 winXray";left=302;top=503;right=818;bottom=534;align="left";bgcolor=16777215;db=1;dl=1;font=LOGFONT(h=-16);iconStyle={align="left";font=LOGFONT(h=-16;name='FontAwesome')};iconText='\uF0C8';notify=1;textPadding={left=19};z=17};
+editHttpPort={cls="plus";left=304;top=163;right=384;bottom=187;align="left";bgcolor=16777215;border={bottom=1;color=-8355712};db=1;dl=1;editable="edit";font=LOGFONT(h=-16);textPadding={bottom=1};z=14};
+editLanPacUrl={cls="plus";left=306;top=364;right=725;bottom=388;align="left";bgcolor=16777215;border={bottom=1;color=-8355712};db=1;dl=1;editable="edit";font=LOGFONT(h=-16);textPadding={bottom=1};z=11};
+editPacPort={cls="plus";left=304;top=272;right=384;bottom=296;align="left";bgcolor=16777215;border={bottom=1;color=-8355712};db=1;dl=1;editable="edit";font=LOGFONT(h=-16);textPadding={bottom=1};z=2};
+editPacUrl={cls="plus";left=304;top=319;right=723;bottom=343;align="left";bgcolor=16777215;border={bottom=1;color=-8355712};db=1;dl=1;editable="edit";font=LOGFONT(h=-16);textPadding={bottom=1};z=8};
+editSocksPort={cls="plus";left=304;top=124;right=384;bottom=148;align="left";bgcolor=16777215;border={bottom=1;color=-8355712};db=1;dl=1;editable="edit";font=LOGFONT(h=-16);textPadding={bottom=1};z=3};
+lbMaxTestServers={cls="static";text="100";left=590;top=93;right=926;bottom=119;bgcolor=16777215;db=1;dl=1;font=LOGFONT(h=-13);transparent=1;z=25};
+lbTestInterval={cls="static";text="15秒";left=590;top=56;right=788;bottom=82;bgcolor=16777215;db=1;dl=1;font=LOGFONT(h=-13);transparent=1;z=20};
+lnkVersion={cls="plus";text="正在检查新版本";left=19;top=575;right=380;bottom=606;align="left";color=8388608;db=1;dl=1;font=LOGFONT(h=-13);iconColor=2960685;iconStyle={align="left";font=LOGFONT(h=-16;name='FontAwesome')};iconText='\uF021';notify=1;paddingLeft=20;z=10};
+radioHttpGlobal={cls="plus";text="全局/PAC 默认使用HTTP代理";left=246;top=206;right=491;bottom=237;align="left";bgcolor=16777215;db=1;dl=1;font=LOGFONT(h=-16);iconStyle={align="left";font=LOGFONT(h=-16;name='FontAwesome')};iconText='\uF111 ';notify=1;textPadding={left=19};z=21};
+radioSocksGlobal={cls="plus";text="全局/PAC 默认使用SOCKS代理";left=491;top=206;right=750;bottom=237;align="left";bgcolor=16777215;db=1;dl=1;font=LOGFONT(h=-16);iconStyle={align="left";font=LOGFONT(h=-16;name='FontAwesome')};iconText='\uF111 ';notify=1;textPadding={left=19};z=22};
+static={cls="static";text="SOCKS 代理服务端口：";left=94;top=128;right=292;bottom=154;align="right";bgcolor=16777215;db=1;dl=1;font=LOGFONT(h=-16);transparent=1;z=4};
+static2={cls="static";text="PAC 端口：";left=162;top=277;right=292;bottom=303;align="right";bgcolor=16777215;db=1;dl=1;font=LOGFONT(h=-16);transparent=1;z=6};
+static3={cls="static";text="本机 PAC 地址：";left=134;top=324;right=292;bottom=350;align="right";bgcolor=16777215;db=1;dl=1;font=LOGFONT(h=-16);transparent=1;z=9};
+static4={cls="static";text="局域网 PAC 地址：";left=134;top=370;right=292;bottom=396;align="right";bgcolor=16777215;db=1;dl=1;font=LOGFONT(h=-16);transparent=1;z=12};
+static5={cls="static";text="HTTP/HTTPS 代理服务端口：";left=34;top=167;right=292;bottom=193;align="right";bgcolor=16777215;db=1;dl=1;font=LOGFONT(h=-16);transparent=1;z=15};
+static6={cls="static";text="支持 SOCKS4、SOCKS4A、SOCKS5";left=392;top=128;right=679;bottom=154;bgcolor=16777215;color=5921370;db=1;dl=1;font=LOGFONT(h=-13);transparent=1;z=16};
+static7={cls="static";text="检测服务器异常间隔时间：";left=47;top=50;right=292;bottom=76;align="right";bgcolor=16777215;db=1;dl=1;font=LOGFONT(h=-16);transparent=1;z=19};
+static8={cls="static";text="允许同时测速的服务器数目：";left=47;top=89;right=292;bottom=115;align="right";bgcolor=16777215;db=1;dl=1;font=LOGFONT(h=-16);transparent=1;z=24};
+static9={cls="static";text="PAC 模式默认启用 SOCKS5 或 HTTP 代理，都支持 DNS 保护。全局代理设为默认 HTTP 代理时支持 DNS保 护。";left=250;top=247;right=891;bottom=273;color=12632256;db=1;dl=1;font=LOGFONT(h=-11);transparent=1;z=26};
+tbMaxTestServers={cls="plus";left=304;top=95;right=585;bottom=107;bgcolor=-2512093;border={radius=-1};color=23807;db=1;dl=1;foreRight=13;forecolor=-14911489;notify=1;paddingBottom=5;paddingTop=5;z=23};
+tbTestInterval={cls="plus";left=304;top=57;right=585;bottom=69;bgcolor=-2512093;border={radius=-1};color=23807;db=1;dl=1;foreRight=13;forecolor=-14911489;notify=1;paddingBottom=5;paddingTop=5;z=18}
 )
 /*}}*/
 

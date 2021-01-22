@@ -5,13 +5,10 @@ import inet.http;
 import inet.url;
 
 namespace xray.pacServer;
-
 $serverMain = ..wsock.tcp.simpleHttpServer.mainThread( 
 	function(response,request,session){ 
 
-		if(request.path=="/proxy.pac"){
-			response.contentType = "application/x-ns-proxy-autoconfig";
-			
+		if(request.path=="/proxy.pac"){ 
 			var pacData = ..string.load(pacPath);
 			var proxPorts = inboundPort.get();
 			if(!proxPorts[["socksProxy"]]){
@@ -19,12 +16,12 @@ $serverMain = ..wsock.tcp.simpleHttpServer.mainThread(
 				return;
 			}
 			
-			var reps = ..string.replace(pacData,"var\s+proxy\s+=\s+%''","var proxy = 'SOCKS "+ request.environ.SERVER_NAME +":"+proxPorts.socksProxy +"'"); 
+			var reps = ..string.replace(pacData,"var\s+proxy\s+=\s+%''","var proxy = 'SOCKS5 "+ request.environ.SERVER_NAME +":"+proxPorts.socksProxy +";SOCKS "+ request.environ.SERVER_NAME +":"+proxPorts.socksProxy +"'"); 
 			if(useHttpProxy.get()){
 				reps = ..string.replace(pacData,"var\s+proxy\s+=\s+%''","var proxy = 'PROXY "+ request.environ.SERVER_NAME +":"+proxPorts.httpProxy +"'"); 
 			}
 	
-			response.write(reps);  
+			response.write(reps);
 		}  
 	} 	
 );
