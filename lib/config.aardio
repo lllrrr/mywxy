@@ -10,7 +10,6 @@ namespace config {
 	    	: $"/xray-core/winXray-default-servers.json"
     	
     	proxy.outbounds = ..xray.outbounds.importFromString(..string.removeBom(serverData));
-    	
     	..publish("outbounds.updateConfigJson",)
 	}
 	
@@ -28,6 +27,10 @@ if(config.proxy.enableGitConfigGithub===null){
 
 if(config.proxy.test === null){
 	config.proxy.test = true;
+}
+
+if(!config.proxy.testInterval){
+	config.proxy.testInterval = 15;
 }
 
 if(!config.core.default){

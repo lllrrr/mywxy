@@ -1,5 +1,5 @@
 # winXray 
-本软件源码已贡献到公共领域并放弃版权，源码可使用 [aardio（开发环境仅6.5MB）](http://www.aardio.com) 编译生成单文件绿色EXE( 不需要.Net等任何外部运行库 ），**[点这里下载](https://raw.githubusercontent.com/winXray/winXray/master/release/winXray.7z)** 解压即可直接使用( 仅  **[5.0MB](https://raw.githubusercontent.com/winXray/winXray/master/release/winXray.7z)** - 已自带 Xray-core）。
+本软件源码已贡献到公共领域并放弃版权，源码可使用 [aardio（开发环境仅6.5MB）](http://www.aardio.com) 编译生成单文件绿色EXE( 不需要.Net等任何外部运行库 ），**[点这里下载](https://raw.githubusercontent.com/winXray/winXray/master/release/winXray.7z)** （ [64位版本](https://raw.githubusercontent.com/winXray/winXray/master/release/winXray.7z) / [32位版本](https://raw.githubusercontent.com/winXray/winXray/master/release/winXray32.7z) ），解压即可直接使用( 仅  **[5.0MB](https://raw.githubusercontent.com/winXray/winXray/master/release/winXray.7z)** - 已自带 Xray-core）。
 
 winXray[:loud_sound:](http://dict.youdao.com/dictvoice?audio=winxray&type=2) 是一个简洁稳定的 [Xray/V2Ray(vmess/vless/xtls)、Shadowsocks、Trojan](https://github.com/XTLS/Xray-core) 通用客户端（Windows系统），可自动检测并连接访问速度最快的代理服务器。服务器连接异常时可以自动更换代理服务器 - 再也不用担心服务器抽风了。winXray 也提供一键安装 XRay(V2Ray、Shadowsocks、Trojan) 服务器工具。  
   
@@ -15,8 +15,8 @@ vless://904da8f7-a5af-3c34-3f3d-c3b2ea59bde8@q.vulvpstech.xyz:443/?host=q.vulvps
 
 ![winXray](./screenshots/winXray.png)
 
-winXray支持批量导入 vless、vmess、ss、trojan …… 等格式的分享链接，  
-也可以导入订阅链接，以及 base 64、json …… 等不同格式的服务器配置。
+winXray支持批量导入 vless、vmess、ss、trojan、trojan-go …… 等格式的分享链接，  
+也可以导入通用订阅链接，以及 base 64、json …… 等不同格式的服务器配置。
 
 ![服务器配置](./screenshots/config.json.png)
 **小技巧: JSON里点击任意字段都会显示该字段的用法说明。**
@@ -28,3 +28,5 @@ winXray支持批量导入 vless、vmess、ss、trojan …… 等格式的分享�
 
 软件首次运行时会在当前目录查找 "./xray-core/xray.exe"   
 发行文件仅需要 "./winXray.exe"，可选带上 "./xray-core/" 目录（ 如果没有找到会自动到v2ray官网下载，不过没有代理服务器下载有时候非常慢 )。
+
+![端口配置](./screenshots/config.advanced.png)

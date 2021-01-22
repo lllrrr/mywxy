@@ -80,13 +80,61 @@ exportSharedLinks = function(outbounds){
 
 importFromString = function(str){ 
 	if(!str){ return; }
-	
 	str = ..string.trim(str);
 	
-	if( ..string.match(str,"%\[\]") ){
-		var cfg = ..web.json.tryParse(str);
-		if(type(cfg)==type.table && #cfg){
-			return cfg;	
+	var jsonData;
+	if(..string.match(str,"%\[\]") || ..string.match(str,"%\{\}")){
+		jsonData = ..web.json.tryParse(str);
+	}
+	
+	if( ..table.isArray(jsonData) ){  
+		return jsonData;
+	}
+	elseif( type(jsonData) == type.table ){ 
+		if( jsonData[["servers"]] ){
+
+			var servers = jsonData[["servers"]] 
+			var outbounds = ..table.array();
+			for i,v in ..table.eachIndex(servers){
+				var outbound = ..table.assign(,v);
+				if(outbound.protocol === null){
+					outbound.protocol = (outbound.server_port&&outbound.password) ? "shadowsocks":"vless"
+				}
+				
+				if(outbound.remarks){
+					outbound.ps = outbound.remarks;
+					outbound.remarks = null;
+				}
+				
+				if(outbound.server){
+					outbound.address = outbound.server;
+					outbound.server = null;
+				}
+				
+				if(outbound.server_port){
+					outbound.port = outbound.server_port;
+					outbound.server_port = null;
+				}
+				
+				if(outbound.password){
+					if(outbound.id){
+						outbound.serverId = outbound.id;
+					}
+					outbound.id = outbound.password;
+					outbound.password = null;
+				}
+				
+				if(outbound.method){
+					outbound.security = outbound.method;
+					outbound.method = null;
+				}
+				
+				
+				
+				..table.push(outbounds,outbound);
+			}
+			
+			return outbounds;
 		}
 	}
 	
@@ -119,10 +167,10 @@ importFromString = function(str){
 	
 	var outbounds = ..table.array();
 	for(line in ..string.lines(str) ){
-		if(#outbounds>=100){
+		if(#outbounds>=300){
 			import win.dlg.message;
 			var msgDlg = win.dlg.message(..mainForm); 
-			var form = msgDlg.warn("导入的节点数目过多，已中止！")
+			var form = msgDlg.warn("导入的节点数目过多，已导入300个节点并中止操作！")
 		
 			return outbounds;
 		}
@@ -203,10 +251,21 @@ importFromString = function(str){
 			continue;
 		}
 
-		var ss,comment = ..string.match(line,`ss\:\/\/([\w=+]+)(<#\S+>?)`);
-		if( ss ) {   
-			var ss = ..crypt.decodeBin(ss); 
-			var method,password,address,port = ..string.match(ss,"^(.+)\:(.+)\@(.+)\:(\d+)")	 
+		var ss,comment = ..string.match(line,`ss\:\/\/([^\s\#]+)(<#\S+>?)`);
+		if( ss ) { 
+			var userinfo,address,port = ..string.match(ss,"^([^:]+)\@(.+)\:(\d+)")	
+			if(!(userinfo&&address&&port)){
+				var str = ..crypt.decodeBin(ss); 
+				if(str){ ss = str; } 
+				
+				method,password,address,port = ..string.match(ss,"^(.+)\:(.+)\@(.+)\:(\d+)")
+			}
+			else {
+				userinfo = ..crypt.decodeBin(userinfo); 
+				if(userinfo){
+					method,password = ..string.match(userinfo,"^(.+)\:(.+)$")
+				}	
+			}
 	
 			if(address && password && port){
 				var outbound = {
@@ -380,6 +439,52 @@ importFromClipboard  = function(){
 	
 	return importFromString(str);
 }
+
+updateSubscription = function(){
+    
+	var cfg = ..config.proxy.outbounds : ..table.array(); 
+		
+	var subscribeUrls = {}
+	for(i=#cfg;1;-1){
+		var outbound = cfg[i] 
+		if(outbound.subscribeUrl){
+			subscribeUrls[outbound.subscribeUrl] = true;	
+		}
+	}
+	
+	if(!..table.count(subscribeUrls)){
+		import win.clip;
+		var clibStr = win.clip.read();
+		if( ..string.startWith(clibStr,"http://") || ..string.startWith(clibStr,"https://")  ){
+			subscribeUrls[clibStr] = true;
+		}
+		else {
+			..mainForm.msgWarn('当前配置不包含来自订阅源的服务器,\n请先复制订阅源网址到剪贴板!');
+			return;
+		} 
+	}
+		
+	var count = 0;
+	for(url,v in subscribeUrls){ 
+		var outbounds = ..xray.outbounds.importFromString(url);
+		if(#outbounds){
+			for(i=#cfg;1;-1){
+				var outbound = cfg[i] 
+				if(outbound.subscribeUrl==url){
+					..table.remove(	cfg,i );
+				}
+			}
+			
+			count = count + #outbounds;
+			..table.append(cfg,outbounds);
+		}
+	}
+	
+	..config.proxy.save();
+	..publish("uiCommand.restartXrayCore",cfg) 
+	..mainForm.msgOk("已成功刷新" + count + "个服务器。",1200);
+}
+
 
 /**intellisense(xray.outbounds)
 exportSharedLinks(.(outbounds) = 导出分享链接

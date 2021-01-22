@@ -185,7 +185,7 @@ winform.editOutbounds.enablePopMenu(function(){
 		var strEditBounds = string.trim(winform.editOutbounds.text);
 		var menu = {
 			{ /*---分隔线---*/ };
-			{ "自剪贴板批量导入 vmess、vless、trojan、trojan-go、ss 链接、或订阅源";
+			{ "自剪贴板导入 vmess/vless/trojan/ss 链接或订阅源";
 				function(id){ 
 					
 					var outbounds = xray.outbounds.importFromClipboard();
@@ -220,7 +220,7 @@ winform.editOutbounds.enablePopMenu(function(){
 						return; 
 					}
 		
-					winform.msgFrown('未导入服务器！ \r\n请先复制以下格式服务器分享链接：\r\n\r\nvmess:// 链接\r\nvless:// 链接\r\nss:// 链接\r\ntrojan:// 链接\r\ntrojan-go:// 链接\r\nhttp:// 或 https:// 订阅源！')
+					winform.msgFrown('未导入服务器！ \r\n请先复制一个或多个以下格式服务器分享链接：\r\n\r\nvmess:// 链接\r\nvless:// 链接\r\nss:// 链接\r\ntrojan:// 链接\r\ntrojan-go:// 链接\r\nhttp:// 或 https:// 通用订阅源！\r\n订阅源也可返回winXray格式的配置JSON。')
 				} 
 			};  
 		}
@@ -394,6 +394,102 @@ winform.editOutbounds.enablePopMenu(function(){
 			} 
 		}); 
 		
+		table.push(menu,{ /*---分隔线---*/ });
+		table.push(menu,{ "插入";{
+			{ "代理服务协议:protocol";
+				function(id){
+					winform.editOutbounds.selText = '"protocol":"vless";'
+				} 
+			};
+			{ "SSH管理端口:sshPort";
+				function(id){
+					winform.editOutbounds.selText = '"sshPort":22;'
+				} 
+			};
+			{ "代理服务器地址:address";
+				function(id){
+					winform.editOutbounds.selText = '"address":"";'
+				} 
+			};
+			{ "端口:port";
+				function(id){
+					winform.editOutbounds.selText = '"port":443;'
+				} 
+			};
+			{ "网络协议:network";
+				function(id){
+					winform.editOutbounds.selText = '"network":"tcp";'
+				} 
+			};
+			{ "服务器密码:id";
+				function(id){
+					winform.editOutbounds.selText = '"id":"";'
+				} 
+			};
+			{ "加密方式:security";
+				function(id){
+					winform.editOutbounds.selText = '"security":"auto";'
+				} 
+			};
+			{ "启用TLS:tls";
+				function(id){
+					winform.editOutbounds.selText = '"tls":"xtls";'
+				} 
+			};
+			{ "TLS服务器名:sni";
+				function(id){
+					winform.editOutbounds.selText = '"sni":"";'
+				} 
+			};
+			{ "启用TLS:tls";
+				function(id){
+					winform.editOutbounds.selText = '"tls":"xtls";'
+				} 
+			};
+			{ "流控:flow";
+				function(id){
+					winform.editOutbounds.selText = '"flow":"xtls-rprx-direct";'
+				} 
+			};
+			
+			 { "多路复用最大连接:concurrency";
+				function(id){
+					winform.editOutbounds.selText = '"concurrency":4;'
+				} 
+			};
+	
+			{ "伪装类型:type";
+				function(id){
+					winform.editOutbounds.selText = '"type":"http";'
+				} 
+			};
+			{ "备注:ps";
+				function(id){
+					winform.editOutbounds.selText = '"ps":"";'
+				} 
+			};
+			{ "请求主机名:host";
+				function(id){
+					winform.editOutbounds.selText = '"host":"";'
+				} 
+			};
+			{ "请求路径:path";
+				function(id){
+					winform.editOutbounds.selText = '"path":"/";'
+				} 
+			};
+			{ "允许自动连接:autoConnect";
+				function(id){
+					winform.editOutbounds.selText = '"autoConnect":false;'
+				} 
+			};
+			{ "备注:ps";
+				function(id){
+					winform.editOutbounds.selText = '"ps":"";'
+				} 
+			};
+		}}); 
+		
 		return menu;
 	}
 })
@@ -447,6 +543,7 @@ var editOutboundsTip = {
 	security = {"加密方式";"可省略,vmess协议默认为auto,vless协议默认为none"};
 	sni = {"TLS服务器名";"TLS客户端请求中的服务器名字段"}; 
 	flow = {"流控";"目前仅用于选择 XTLS 的算法,省略时默认值为xtls-rprx-direct"}; 
+	concurrency = {"Mux多路复用:最大并发连接数";"最小值1，最大值1024，特殊值-1，不加载mux模块。缺省由winXray根据连接协议自动设定此值。"}; 
 }
 
 winform.editOutbounds.wndproc = function(hwnd,message,wParam,lParam){

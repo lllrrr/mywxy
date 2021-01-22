@@ -128,9 +128,8 @@ winform.savePacToFile = function(){
 	var direct =  web.json.tryParse(string.conv.fromWide(winform.editPacDirect.text))
 	if(!(proxy)) return winform.msgErr("代理域名配置格式错误");
 	if(!(direct)) return winform.msgErr("直连域名配置格式错误");
-	
-	str = string.replace($"/pac.txt","var\s+rules\s*=\s*%\[\]","var rules = " + web.json.stringify({{direct;proxy}},true))
-	string.save(io.appData("/xray/proxy.pac.txt"),str );
+	 
+	xray.pacServer.savePacText(web.json.stringify({{direct;proxy}},true));
 	
 	winform.editPacDirect.modified = false;
 	winform.editPacProxy.modified = false;
@@ -159,9 +158,8 @@ winform.btnReset.oncommand = function(id,event){
 
 	thread.invoke( 
 		function(winform){
-			var pacPath = io.appData("/xray/proxy.pac.txt");
-			var str = io.exist(pacPath) ? string.load(pacPath) || $"/pac.txt";
-			if(str) winform.loadPacToEdit(str);
+			import xray.pacServer;
+			if(str) winform.loadPacToEdit(xray.pacServer.loadPacText());
 			
             sleep(500);
             winform.btnReset.disabledText = null;
@@ -172,10 +170,8 @@ winform.btnReset.oncommand = function(id,event){
 	)
 }
 
-
-var pacPath = io.appData("/xray/proxy.pac.txt");
-var str = io.exist(pacPath) ? string.load(pacPath) || $"/pac.txt";
-if(str) winform.loadPacToEdit(str);
+import xray.pacServer;
+winform.loadPacToEdit( xray.pacServer.loadPacText() );
 
 winform.editPacProxy.modified = false;
 winform.editPacDirect.modified = false;
@@ -453,21 +449,27 @@ winform.onDestroy = function(){
 }
 
 import win.clip;
-winform.beforeShowWindow = function(shown,status){ 
-	var str = win.clip.read();
-	if(str){
-		var domain = string.match(str,"\w<[\w-_]*\.>+\w{1,8}");	
-		if(domain){
-			winform.editPacDomain.text = domain;
-			
-			var proxy =  web.json.tryParse(string.conv.fromWide(winform.editPacProxy.text)) 
-			if( (proxy)) {
-				winform.radioProxy.checked = table.indexOf(proxy,domain);
-				winform.radioDirect.checked = !winform.radioProxy.checked;
-			}
+winform.onActivate = function(state,hwndOther,minimized){
+	if(state){
+		if(#winform.editPacDomain.text){
+			return;
 		}
-	} 
-} 
+		
+		var str = win.clip.read();
+		if(str){
+			var domain = string.match(str,"\w<[\w-_]*\.>+\w{1,8}");	
+			if(domain){
+				winform.editPacDomain.text = domain;
+				
+				var proxy =  web.json.tryParse(string.conv.fromWide(winform.editPacProxy.text)) 
+				if( (proxy)) {
+					winform.radioProxy.checked = table.indexOf(proxy,domain);
+					winform.radioDirect.checked = !winform.radioProxy.checked;
+				}
+			}
+		} 	
+	}
+}
 
 import inet.url;
 winform.editPacDomain.editBox.onChange = function(){ 

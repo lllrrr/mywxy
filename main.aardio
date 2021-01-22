@@ -19,16 +19,18 @@ elseif(_ARGV.sshInstall){
     		
         	prcs = process("ssh","-t " +_ARGV.sshInstall + ` "firewall-cmd --permanent --add-port=80/tcp;firewall-cmd --permanent --add-port=443/tcp;firewall-cmd --reload;iptables -A INPUT -p tcp --dport 80 -j ACCEPT;iptables -A INPUT -p tcp --dport 443 -j ACCEPT;wget -P /root -N --no-check-certificate ""https://raw.githubusercontent.com/mack-a/v2ray-agent/master/install.sh"" && chmod 700 /root/install.sh && /root/install.sh"`)
    			if(!prcs){
-   				console.log(!_WIN10_LATER?"此功能仅支持 Windows 10 系统":"系统未安装SSH工具")
+   				console.log(!_WIN10_LATER?"此功能仅支持 Windows 10 系统":"系统未安装SSH工具！");
    			}
    			else {
    				import process.job.limitKill;
    				prcs.assignToJobObject(process.job.limitKill);	
+   				prcs.wait();
    			}
+   			
+   			console.pause();
     	}
 	)
 	
-	sleep(100*1000)
 	return;
 }
 elseif(_ARGV.sshLogin){
@@ -47,16 +49,18 @@ elseif(_ARGV.sshLogin){
     		
         	prcs = process("ssh","-t " +_ARGV.sshLogin + ``)
    			if(!prcs){
-   				console.log(!_WIN10_LATER?"此功能仅支持 Windows 10 系统":"系统未安装SSH工具")
+   				console.log(!_WIN10_LATER?"此功能仅支持 Windows 10 系统":"系统未安装SSH工具！");
    			}
    			else {
    				import process.job.limitKill;
    				prcs.assignToJobObject(process.job.limitKill);	
+   				prcs.wait();
    			}
+   			
+   			console.pause();
     	}
 	)
 	
-	sleep(100*1000)
 	return;
 }
 elseif(_ARGV.updateTime){
@@ -65,10 +69,13 @@ elseif(_ARGV.updateTime){
 	return;
 }
 else {
+    import process;
 	import fsys.update.simpleMain;
+	
 	if( fsys.update.simpleMain(
 		"winXray(Xray/V2Ray、Shadowsocks、Trojan通用客户端 )",
-		"https://raw.githubusercontent.com/winXray/winXray/master/release/update/version.txt",
+		process().isWow64() ? "https://raw.githubusercontent.com/winXray/winXray/master/release/update/version.txt"
+			: "https://raw.githubusercontent.com/winXray/winXray/master/release/update32/version.txt",
 		..io.appData("/winXray/update"),
 		function(version,description,status){})){
 		return 0;	
@@ -82,7 +89,7 @@ import fonts.fontAwesome;
 /*DSG{{*/
 mainForm = win.form(text="winXray";right=1019;bottom=679;bgcolor=15793151;border="none")
 mainForm.add(
-caption={cls="bkplus";text="winXray 1.3.4";left=67;top=9;right=727;bottom=27;align="left";color=6052956;dl=1;dt=1;font=LOGFONT(h=-14);z=7};
+caption={cls="bkplus";text="winXray 1.3.8";left=67;top=9;right=727;bottom=27;align="left";color=6052956;dl=1;dt=1;font=LOGFONT(h=-14);z=7};
 custom={cls="custom";left=83;top=40;right=1022;bottom=679;bgcolor=16777215;db=1;dl=1;dr=1;dt=1;z=4};
 logo={cls="bkplus";text='\uF1D9';left=35;top=7;right=64;bottom=32;color=3054125;dl=1;dt=1;font=LOGFONT(h=-18;name='FontAwesome');z=6};
 navBar={cls="bkplus";left=0;top=37;right=83;bottom=681;bgcolor=3442175;db=1;dl=1;dt=1;z=1};
@@ -149,6 +156,9 @@ mainForm.wndproc = {
 			mainForm.popmenu = win.ui.popmenu(mainForm);
 			mainForm.popmenu.add('自动切换到最快的服务器',function(id){ 
 				publish("uiCommand.restartXrayCore",)
+			});
+			mainForm.popmenu.add('立即更新所有订阅源',function(id){ 
+				xray.outbounds.updateSubscription();
 			});
 			mainForm.popmenu.add();
 			

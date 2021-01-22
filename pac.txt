@@ -6,12 +6,7 @@
 var proxy = 'SOCKS5 127.0.0.1:1080';
 var rules = [
     [
-        [],
-        []
-    ],
-    [
         [
-            "v2fly.org",
             "aftygh.gov.tw",
             "aide.gov.tw",
             "aliyun.com",
@@ -92,6 +87,7 @@ var rules = [
             "zhongsou.com"
         ],
         [
+            "raw.githubusercontent.com",
             "030buy.com",
             "0rz.tw",
             "1-apple.com.tw",
@@ -386,7 +382,7 @@ var rules = [
             "apiary.io",
             "apigee.com",
             "apk-dl.com",
-            "apkdler.com",
+            "apkcombo.com",
             "apkmirror.com",
             "apkmonk.com",
             "apkplz.com",
@@ -3642,6 +3638,7 @@ var rules = [
             "paradisehill.cc",
             "paradisepoker.com",
             "parkansky.com",
+            "parler.com",
             "parsevideo.com",
             "partycasino.com",
             "partypoker.com",
@@ -5039,6 +5036,8 @@ var rules = [
             "uyghurstudies.org",
             "uygur.org",
             "uymaarip.com",
+            "v2ex.com",
+            "v2ray.com",
             "van001.com",
             "van698.com",
             "vanemu.cn",

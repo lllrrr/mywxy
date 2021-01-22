@@ -5,7 +5,6 @@ import inet.url;
 import crypt;
 
 namespace xray.core.configJson;
-//44819-44899	
  
 write  = function(jsonPath,outbound,sockPort,httpPort){
     if(!outbound){ return; }
@@ -23,12 +22,17 @@ write  = function(jsonPath,outbound,sockPort,httpPort){
 	if(outbound.protocol=="vless"){ 
 		if(!outbound.tls && outbound.port==443) outbound.tls = "tls";
 		if(!outbound.tls) outbound.tls = "tls";
+		
+		var mux = (outbound.concurrency !== null) ? {
+			concurrency=outbound.concurrency;
+			enabled=outbound.concurrency ? ( outbound.concurrency > 0)
+		} : {
+			concurrency=8;
+			enabled=true
+		}; 
 			
 		var ob = {
-			mux = outbound.tls != "xtls" ?  {
-				concurrency=8;
-				enabled=true;
-			} : null;
+			mux = outbound.tls != "xtls" ? mux : null;
 			protocol="vless";
 			
 			settings={
@@ -136,12 +140,15 @@ write  = function(jsonPath,outbound,sockPort,httpPort){
 	}
 	elseif(outbound.protocol=="vmess"){
 		if(!#outbound.security) outbound.security = "auto";
-		
+		 
 		var ob = {
-			mux={
+			mux = (outbound.concurrency !== null) ? {
+				concurrency=outbound.concurrency;
+				enabled=outbound.concurrency ? ( outbound.concurrency > 0)
+			} : {
 				concurrency=8;
 				enabled=true
-			};
+			}; 
 			protocol="vmess";
 			settings={
 				vnext={
@@ -242,10 +249,13 @@ write  = function(jsonPath,outbound,sockPort,httpPort){
 	elseif(outbound.protocol=="trojan" || outbound.protocol=="trojan-go"){
 		outbound.tls = #outbound.tls ? outbound.tls : "tls";
 		var ob = {
-			mux={
-				concurrency=4;
-				enabled=true
-			};
+			mux = (outbound.concurrency !== null) ? {
+				concurrency=outbound.concurrency;
+				enabled=outbound.concurrency ? ( outbound.concurrency > 0)
+			} : {
+				concurrency=-1;
+				enabled=false
+			}; 
 			protocol="trojan";
 			settings={
 				servers={
@@ -289,10 +299,13 @@ write  = function(jsonPath,outbound,sockPort,httpPort){
 	} 
 	elseif(outbound.protocol=="shadowsocks"){
 		var ob = {
-			mux={
+			mux = (outbound.concurrency !== null) ? {
+				concurrency=outbound.concurrency;
+				enabled=outbound.concurrency ? ( outbound.concurrency > 0)
+			} : {
 				concurrency=-1;
 				enabled=false
-			};
+			}; 
 			protocol="shadowsocks";
 			settings={
 				servers={

@@ -38,9 +38,18 @@ $serverMain = ..wsock.tcp.simpleHttpServer.mainThread(
 );
 $serverMain.threadNum = 50; 
 
-var pacPath = ..io.appData("/xray/proxy.pac.txt");
+var pacPath = ..io.appData("/winXray/pac.txt");
 if( ! ..io.exist(pacPath) ){
 	..string.save(pacPath,$"/pac.txt" )
+}
+
+loadPacText = function(){
+	return ..io.exist(pacPath) ? ..string.load(pacPath) || $"/pac.txt";
+}
+
+savePacText = function(json){
+	var str = ..string.replace($"/pac.txt","var\s+rules\s*=\s*%\[\]","var rules = " + json);
+	..string.save(pacPath,str );
 }
 
 var inboundPort = ..thread.var();
