@@ -313,8 +313,8 @@ importFromString = function(str,subscribeUrl){
 			continue;
 		}
 
-		var vmess = ..string.match(line,`vmess\:\/\/([\w=+]+)`);
-		if( vmess ) {  
+		var vmess = ..string.match(line,`vmess\:\/\/([\w=+/-_]+)`);
+		if( vmess ) { 
 			var json = ..crypt.decodeBin(vmess);	
 			var outbound = ..web.json.tryParse(json);	
 			if(type(outbound)=="table"){

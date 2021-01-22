@@ -10,10 +10,13 @@ switch = function(mode){
 	..config.proxy.mode = mode : "direct";
 	..config.proxy.save();
  
+ 	import console
+ 	console.log("switchProxy",mode)
 	if(mode=="pac"){
 		var pacUrl = ..v2ray.pacServer.getUrl();
 		if(pacUrl){
 			..inet.conn.setProxyAutoConfig(,pacUrl );
+			console.log("pacUrl",pacUrl)
 		}
 		else {
 			..v2ray.pacServer.restart();

@@ -24,7 +24,7 @@ $serverMain = ..wsock.tcp.simpleHttpServer.mainThread(
 			var useHttp = useHttpProxy.get();
 			if(!useHttp){
 				var ua = request.headers["user-agent"];
-				if(..string.find(ua,"WinHttp-Autoproxy-Service/")){
+				if( ua && ..string.find(ua,"WinHttp-Autoproxy-Service/")){
 					useHttp = true; 
 				}
 			}
