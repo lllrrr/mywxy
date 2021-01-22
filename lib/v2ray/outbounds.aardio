@@ -217,6 +217,7 @@ importFromString = function(str,subscribeUrl){
 		form.progress.startProgress(50); 
 		
 		subscribeUrl = str;
+		
 		if(..string.match(subscribeUrl,"^\s*/\N+\s*$") ){
 			if(!..string.find(subscribeUrl,"/<blob>|<raw>")){
 				subscribeUrl = ..inet.url.append("https://raw.githubusercontent.com",subscribeUrl);
@@ -241,7 +242,7 @@ importFromString = function(str,subscribeUrl){
 				return inet.http().get(subscribeUrl);
 			},subscribeUrl 
 		)
-		
+	
 		form.close();
 		if(!str){
 			return;
@@ -282,8 +283,8 @@ importFromString = function(str,subscribeUrl){
 		var crc32 = ..string.crc32(str);
 		_subscriptionResponseCache[subscribeUrl] = crc32;
 	}
-	
-	if(..string.match(str,"^[\w=+/-_]+$")){
+
+	if(..string.match(str,"^\s*[\w=+/-_]+\s*$")){
 		str = ..crypt.decodeBin(str);
 		if(!str) return;
 	}

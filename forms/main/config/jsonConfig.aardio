@@ -5,7 +5,10 @@ var winform = win.form(text="aardio form";right=912;bottom=793;bgcolor=16777215)
 winform.add(
 advancedConfig={cls="\forms\main\config\advancedConfig.aardio";left=9;top=29;right=902;bottom=739;bgcolor=16777215;db=1;dl=1;dr=1;dt=1;edge=1;z=10};
 btnUpdate={cls="plus";text="更新服务器配置";left=687;top=753;right=856;bottom=784;align="left";bgcolor=11580047;db=1;dr=1;font=LOGFONT(h=-13);iconStyle={align="left";font=LOGFONT(h=-13;name='FontAwesome');padding={left=22}};iconText='\uF0C7';notify=1;textPadding={left=40};z=5};
-editCoreConfig={cls="edit";left=9;top=29;right=902;bottom=739;db=1;dl=1;dr=1;dt=1;edge=1;hide=1;hscroll=1;multiline=1;vscroll=1;z=8};
+btnUpdateSsrCore={cls="plus";text="下载 / 更新 SSR Core";left=433;top=3;right=631;bottom=36;align="left";color=3947580;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={align="left";font=LOGFONT(h=-19;name='FontAwesome');padding={left=18}};iconText='\uF1D8';notify=1;textPadding={left=50};z=15};
+btnUpdateV2RayCore={cls="plus";text="下载 / 更新 V2Ray Core";left=16;top=3;right=223;bottom=36;align="left";color=3947580;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={align="left";font=LOGFONT(h=-19;name='FontAwesome');padding={left=18}};iconText='\uF27D';notify=1;textPadding={left=50};z=13};
+btnUpdateXrayCore={cls="plus";text="下载 / 更新 Xray Core";left=229;top=3;right=427;bottom=36;align="left";color=3947580;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={align="left";font=LOGFONT(h=-19;name='FontAwesome');padding={left=18}};iconText='\uF0E7';notify=1;textPadding={left=50};z=14};
+editCoreConfig={cls="edit";left=9;top=38;right=902;bottom=739;db=1;dl=1;dr=1;dt=1;edge=1;hide=1;hscroll=1;multiline=1;vscroll=1;z=8};
 editOutbounds={cls="edit";left=9;top=29;right=902;bottom=739;db=1;dl=1;dr=1;dt=1;edge=1;hscroll=1;multiline=1;vscroll=1;z=7};
 lbTip={cls="static";text="可在下面输入多行服务器分享链接，或JSON数组( 点击字段名会显示用法说明 )：";left=11;top=9;right=899;bottom=29;color=3947580;dl=1;dr=1;dt=1;font=LOGFONT(h=-13);transparent=1;z=6};
 navAdvancedConfig={cls="plus";text="代理端口 / 高级配置";left=359;top=750;right=493;bottom=782;border={top=1;color=-16744448};db=1;dl=1;z=9};
@@ -47,7 +50,11 @@ tbs.onSelchange = function(idx,strip,form){
 		winform.editCoreConfig.hide = true;
 		winform.subscription.hide = true;
 
-		winform.lbTip.text = `可在下面输入多行服务器分享链接，或JSON数组( 点击字段名会显示用法说明 )：`;
+		winform.lbTip.hide = false;
+		winform.btnUpdateSsrCore.hide = true;
+		winform.btnUpdateV2RayCore.hide = true;
+		winform.btnUpdateXrayCore.hide = true;
+		
 		winform.btnUpdate.text = "更新服务器配置";
 		winform.btnUpdate.hide = false;
 	}
@@ -57,8 +64,12 @@ tbs.onSelchange = function(idx,strip,form){
 		winform.advancedConfig.hide = true;
 		winform.subscription.hide = true;
 		
-		winform.lbTip.text = `inbounds[0]，inbounds[1]必须为入站socks、http 代理，outbounds[0] 会转换为出站服务器数组： `
-		winform.btnUpdate.text = "更新Xray配置 "
+		winform.lbTip.hide = true;
+		winform.btnUpdateSsrCore.hide = false;
+		winform.btnUpdateV2RayCore.hide = false;
+		winform.btnUpdateXrayCore.hide = false;
+		
+		winform.btnUpdate.text = "更新内核配置 "
 		winform.btnUpdate.hide = false;
 	}	
 	elseif(idx==3) {
@@ -68,7 +79,11 @@ tbs.onSelchange = function(idx,strip,form){
 		winform.advancedConfig.hide = true;
 		winform.editCoreConfig.hide = true; 
 
-		winform.lbTip.text = `` 
+		winform.lbTip.hide = true;
+		winform.btnUpdateSsrCore.hide = true;
+		winform.btnUpdateV2RayCore.hide = true;
+		winform.btnUpdateXrayCore.hide = true;
+		
 		winform.btnUpdate.hide = true;
 		winform.subscription.loadSubscriptionsOnce();
 	}	
@@ -77,7 +92,12 @@ tbs.onSelchange = function(idx,strip,form){
 		winform.editOutbounds.hide = true; 
 		winform.subscription.hide = true;
 		winform.editCoreConfig.hide = true;
-		winform.lbTip.text = ``
+		
+		winform.lbTip.hide = true;
+		winform.btnUpdateSsrCore.hide = true;
+		winform.btnUpdateV2RayCore.hide = true;
+		winform.btnUpdateXrayCore.hide = true;
+		
 		winform.btnUpdate.hide = true;
 	}	
 }
@@ -614,10 +634,70 @@ winform.editOutbounds.wndproc = function(hwnd,message,wParam,lParam){
 	} 
 }
 
+winform.editCoreConfig.oncommand = function(id,event){
+	if( event === 0x100/*_EN_SETFOCUS*/){
+		winform.editCoreConfig.showInfoTip("提示",'inbounds[0] 必须为入站 SOCKS 代理，\ninbounds[1] 必须为入站 HTTP 代理，\noutbounds[0] 会转换为出站服务器数组。')
+	}
+}
+
 winform.editOutbounds.limit = 0;
 winform.editCoreConfig.limit = 0;
 
-winform.enableDpiScaling();
+winform.btnUpdateSsrCore.skin(style.plainButton)
+winform.btnUpdateSsrCore.oncommand = function(id,event){
+	winform.btnUpdateSsrCore.disabledText = {'\uF254';'\uF251';'\uF252';'\uF253';'\uF250'};
+	
+	import v2ray.core.ssr;
+	var versionTag = v2ray.core.ssr.updateCore();
+	if( versionTag ){
+		publish("uiCommand.restartV2RayCore");
+		winform.btnUpdateSsrCore.disabledText = null;
+		winform.msgOk("SSR Core（ ShadowsocksR-native ） 已更新到：" + versionTag,1500)
+	}
+	else {
+		winform.btnUpdateSsrCore.disabledText = null;
+	} 	
+}
+
+winform.btnUpdateV2RayCore.skin(style.plainButton)
+winform.btnUpdateV2RayCore.oncommand = function(id,event){
+    winform.btnUpdateXrayCore.disabled = true;
+	winform.btnUpdateV2RayCore.disabledText = {'\uF254';'\uF251';'\uF252';'\uF253';'\uF250'};
+	
+	import v2ray.core;
+	var versionTag = v2ray.core.updateCore();
+	if( versionTag ){
+		publish("uiCommand.restartV2RayCore");
+		winform.btnUpdateV2RayCore.disabledText = null;
+		winform.msgOk("已下载最新 V2Ray Core 版本：" + versionTag + '\nV2Ray 内核已切换为： V2Ray Core',1500)
+	}
+	else {
+		winform.btnUpdateV2RayCore.disabledText = null;
+	} 
+	
+	winform.btnUpdateXrayCore.disabled = false;
+}
+
+winform.btnUpdateXrayCore.skin(style.plainButton)
+winform.btnUpdateXrayCore.oncommand = function(id,event){
+    
+    winform.btnUpdateV2RayCore.disabled = true;
+	winform.btnUpdateXrayCore.disabledText = {'\uF254';'\uF251';'\uF252';'\uF253';'\uF250'};
+	
+	import v2ray.core.xray;
+	var versionTag = v2ray.core.xray.updateCore();
+	if( versionTag ){
+		publish("uiCommand.restartV2RayCore");
+		winform.btnUpdateXrayCore.disabledText = null;
+		winform.msgOk("已下载最新 XRay Core 版本：" + versionTag+ '\nV2Ray 内核已切换为：XRay Core',1500)
+	}
+	else {
+		winform.btnUpdateXrayCore.disabledText = null;
+	} 
+	
+	winform.btnUpdateV2RayCore.disabled = false;
+}
+
 winform.show();
 win.loopMessage();
 return winform;

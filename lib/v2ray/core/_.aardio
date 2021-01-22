@@ -275,7 +275,7 @@ updateCore = function(){
 	}
 	  
 	import fsys;
-	fsys.delete(..io.appData("/v2ray/temp/"))
+	fsys.delete( ..io.appData("/winXray/temp/v2ray/") );
 	 
 	
 	import zlib.httpFile;
