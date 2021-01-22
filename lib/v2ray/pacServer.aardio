@@ -33,6 +33,7 @@ $serverMain = ..wsock.tcp.simpleHttpServer.mainThread(
 				reps = ..string.replace(pacData,"var\s+proxy\s+=\s+%''","var proxy = 'PROXY "+ request.environ.SERVER_NAME +":"+proxPorts.httpProxy +"'"); 
 			}
 	
+			response.contentType = "application/x-ns-proxy-autoconfig";
 			response.write(reps);
 		}  
 	} 	

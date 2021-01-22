@@ -57,8 +57,12 @@ tooltipCtrl.addTool(winform.radioSocksGlobal,"如果某些程序不支持SOCKS�
 import v2ray.pacServer;
 onPacUpdated = function(){
 	winform.editPacPort.text = v2ray.pacServer.getPort() || config.proxy.pacPort || 1083;
-	winform.editPacUrl.text = v2ray.pacServer.getUrl();
-	winform.editLanPacUrl.text = v2ray.pacServer.getUrl(true);
+	
+	var pac = v2ray.pacServer.getUrl();
+	winform.editPacUrl.text = pac ? string.match(pac,"[^?]+");
+	pac = v2ray.pacServer.getUrl(true);
+	winform.editLanPacUrl.text = pac ? string.match(pac,"[^?]+");
+	
 	winform.editLanPacUrl.disabled = !winform.chkLan.checked;
 }
 
@@ -67,9 +71,11 @@ subscribe("pacServer.restarted",function(pacPort){
 }) 
 
 subscribe("sysProxy.modeChanged",function(mode){
-	if(mode==="mode"){
-		winform.editPacUrl.text = v2ray.pacServer.getUrl();
-		winform.editLanPacUrl.text = v2ray.pacServer.getUrl(true);	
+	if(mode==="pac"){
+		var pac = v2ray.pacServer.getUrl();
+		winform.editPacUrl.text = pac ? string.match(pac,"[^?]+");
+		pac = v2ray.pacServer.getUrl(true);
+		winform.editLanPacUrl.text = pac ? string.match(pac,"[^?]+");	
 	}
 }) 
 
@@ -254,6 +260,7 @@ winform.editPacUrl.setCueBannerText("当前未启用本机PAC代理");
 winform.editLanPacUrl.setCueBannerText("当前未启用局域网PAC代理");
 
 winform.chkLan.oncommand = function(id,event){
+    winform.editLanPacUrl.editBox.setsel(0);
 	winform.editLanPacUrl.disabled = !winform.chkLan.checked;
 	winform.btnOpenFirewall.disabled = !winform.chkLan.checked;
 }
