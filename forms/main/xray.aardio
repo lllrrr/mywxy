@@ -68,7 +68,7 @@ var activeOutbound = function(outboundIndex,outboundAddress,enableRetry){
 				
  				
 				if( lastStatusCode == 204 ){
-					frmXray.onStartXrayComplete(outboundIndex,currentTesting);
+					frmXray.onStartXrayComplete(outboundIndex,currentTesting,outboundAddress);
 					return;	
 				}
 				restClient.close();
@@ -104,17 +104,13 @@ Accept-Charset:utf-8;
 						var rep = client.read(9);
 						client.close();
 						 
-						if(outboundAddress!=frmXray.listview.getItemText(outboundIndex,2)){
-							return;
-						}
-					
 						if( rep && ..string.startWith(rep,"HTTP/1.1 ") ){
-							frmXray.onStartXrayComplete(outboundIndex,currentTesting);
+							frmXray.onStartXrayComplete(outboundIndex,currentTesting,outboundAddress);
 							return;	
 						} 
 					}
 				}
-				frmXray.onStartXrayFailed(outboundIndex,enableRetry);
+				frmXray.onStartXrayFailed(outboundIndex,enableRetry,outboundAddress);
 			},frmXray,outboundIndex,outboundAddress,xray.core.socksProxyPort,enableRetry,currentTesting
 		)
 
@@ -135,34 +131,41 @@ frmXray.autoUpdateSubscription = function(timeout){
   			autoUpdateSubscriptionTimerId = null;
   			
   			import xray.outbounds;
-			xray.outbounds.autoUpdateSubscription();
+			xray.outbounds.autoUpdateSubscription(); 
   		},timeout:10000)  		
   	}
 } 
 
-frmXray.onStartXrayComplete = function(outboundIndex,currentTesting){
+frmXray.onStartXrayComplete = function(outboundIndex,currentTesting,outboundAddress){
 	frmXray.autoUpdateSubscription(-1);
-	frmXray.listview.ensureVisible(outboundIndex);
 	
+	var outbound = config.proxy.outbounds[outboundIndex];
+    var outbound = ..config.proxy.outbounds[outboundIndex];
+    if(!(outbound && (outbound.address == outboundAddress))){
+    	return;
+    }
+    
+    var listview = frmXray.listview;
+	listview.ensureVisible(outboundIndex);
 	for b,v in table.eachIndex(config.proxy.outbounds){
-		frmXray.listview.setItemText("",b,8);
+		listview.setItemText("",b,8);
 	}
 	
 	frmXray.autoTesting = false;
-	frmXray.listview.setItemText("活动服务器：正常",outboundIndex,8);
-	frmXray.listview.activeOutboundIndex = outboundIndex;
+	listview.setItemText("活动服务器：正常",outboundIndex,8);
+	listview.activeOutboundIndex = outboundIndex;
 
-	var address  = frmXray.listview.getItemText(outboundIndex,2);
+	var address  = listview.getItemText(outboundIndex,2);
 	if(!currentTesting) frmXray.edit.print("已切换到服务器：",address);
-	frmXray.listview.activeOutboundAddress = address;
+	listview.activeOutboundAddress = address;
 
-	if(frmXray.listview.getItemText(outboundIndex,7)=="不可用"){
-		frmXray.listview.setItemText("...",outboundIndex,7);
+	if(listview.getItemText(outboundIndex,7)=="不可用"){
+		listview.setItemText("...",outboundIndex,7);
 	}
 		
 	frmXray.onTcpingReturn = function(outboundIndex,address,succeeded,speedText){
-		if(address==frmXray.listview.getItemText(outboundIndex,2)){
-			frmXray.listview.setItemText(speedText,outboundIndex,7);
+		if(address==listview.getItemText(outboundIndex,2)){
+			listview.setItemText(speedText,outboundIndex,7);
 		}
 	};
 	frmXray.validOutbounds = {};
@@ -175,23 +178,33 @@ subscribe("activeOutbound",function(address){
     ..globalActiveOutbound = address;
 } )
 
-frmXray.onStartXrayFailed = function(outboundIndex,enableRetry){
+frmXray.onStartXrayFailed = function(outboundIndex,enableRetry,outboundAddress){
 
     ..publish("activeOutbound",false);
-    frmXray.autoUpdateSubscription();
     
-	frmXray.listview.ensureVisible(outboundIndex);
-	if(frmXray.listview.activeOutboundIndex==outboundIndex){
-		frmXray.listview.activeOutboundIndex=null;
-		frmXray.listview.activeOutboundAddress = null;
+    var outbound = ..config.proxy.outbounds[outboundIndex];
+    if(!(outbound && (outbound.address == outboundAddress))){
+    	return;
+    }
+    
+    if(outbound.subscribeUrl){
+    	frmXray.autoUpdateSubscription();
+    } 
+    
+    var listview = frmXray.listview;
+	listview.ensureVisible(outboundIndex);
+	if(listview.activeOutboundIndex==outboundIndex){
+		listview.activeOutboundIndex=null;
+		listview.activeOutboundAddress = null;
 	}
 	
+	listview.setItemText("不可用",outboundIndex,7);
 	if(enableRetry){
 		if(#frmXray.validOutbounds){
 			var next = table.shift(frmXray.validOutbounds);
 			activeOutbound(next[1],next[2],#frmXray.validOutbounds);
-			frmXray.listview.setItemText("异常,测试下一个...",outboundIndex,8);
-			frmXray.edit.print("服务器异常：",frmXray.listview.getItemText(outboundIndex,2)); 
+			listview.setItemText("异常,测试下一个...",outboundIndex,8);
+			frmXray.edit.print("服务器异常：",listview.getItemText(outboundIndex,2)); 
 			frmXray.edit.print("正在尝试连接：",next[2]); 	
 		}
 		else {
@@ -199,8 +212,8 @@ frmXray.onStartXrayFailed = function(outboundIndex,enableRetry){
 		}
 	}
 	else {
-		frmXray.listview.setItemText("活动服务器：异常",outboundIndex,8);
-		frmXray.edit.print("已切换到服务器：",frmXray.listview.getItemText(outboundIndex,2)); 
+		listview.setItemText("活动服务器：异常",outboundIndex,8);
+		frmXray.edit.print("已切换到服务器：",listview.getItemText(outboundIndex,2)); 
 		frmXray.autoTesting = false;
 	} 
 	
@@ -249,7 +262,7 @@ frmXray.onTcpingFailed = function(){
 		frmXray.clearTimeout(retryOnNetworkAliveTimerId);
 	}
 	 
-	if(inet.http.isAlive(,false)){	
+	if(inet.http.isAlive(,false)){
 		frmXray.autoUpdateSubscription(1000);
 	}
 	else {
@@ -360,6 +373,10 @@ frmXray.btnTcping.oncommand = function(id,event){
 	else {
 		if(id) frmXray.msgWarn("请先添加服务器")
 		xray.core.stop();
+		
+		frmXray.btnTcping.disabledText = null;
+		frmXray.autoTesting = false;
+		frmXray.onTcpingReturn = function(outboundIndex,address,succeeded,speedText){};
 	}
 }
 
@@ -385,6 +402,52 @@ var pingThread = function( ip,frmXray ) {
         
     }
 } 
+
+var removeOutbounds = function(selectedItems){
+    
+    //避免后台线程改变activeIndex
+	frmXray.onTcpingReturn = function(outboundIndex,address,succeeded,speedText){}; 
+	frmXray.btnTcping.disabledText = null;
+	frmXray.autoTesting = false;
+	
+	var activeIndex = frmXray.listview.activeOutboundIndex;  
+	var outbounds = config.proxy.outbounds;
+	for(i=#outbounds;1;-1){ 
+		var ob = outbounds[i];
+		if(activeIndex==i){
+    		ob.active = true;
+    	}
+	}
+
+	if(#selectedItems){
+		for(i=#selectedItems;1;-1){
+  				var item = selectedItems[i] 
+				frmXray.listview.delItem(item);
+				..table.remove(config.proxy.outbounds,item);
+		}
+	}
+	else{
+		for(i=#outbounds;1;-1){ 	
+			if(frmXray.listview.getItemText(i,7)=="不可用"){
+				..table.remove(outbounds,i);
+				frmXray.listview.delItem(i);
+			} 
+		}
+	}
+
+	frmXray.listview.activeOutboundIndex = null;
+    for(i=1;#outbounds;1){
+    	if(outbounds[i].active){
+    		frmXray.listview.activeOutboundIndex = i;
+    		break;
+    	}
+    }
+	publish("outbounds.updateConfigJson"); 
+
+	if(activeIndex && (!frmXray.listview.activeOutboundIndex) ){
+		frmXray.btnTcping.oncommand();
+	}
+}
 
 import xray.outbounds;
 frmXray.listview.onnotify = function(id,code,ptr){
@@ -455,18 +518,15 @@ frmXray.listview.onnotify = function(id,code,ptr){
 				popmenu.add('清空服务器列表',function(id){
 					config.proxy.outbounds = ..table.array();
 					frmXray.listview.clear();
+					
+					frmXray.btnTcping.disabledText = null;
+					frmXray.autoTesting = false;
+					frmXray.onTcpingReturn = function(outboundIndex,address,succeeded,speedText){}  
 					publish("outbounds.updateConfigJson");
 				});
 				
 				popmenu.add('自动清除「不可用」服务器',function(id){
-					for(i=#config.proxy.outbounds;1;-1){ 
-						if(frmXray.listview.getItemText(i,7)=="不可用"){
-							..table.remove(config.proxy.outbounds,i);
-							frmXray.listview.delItem(i);
-						} 
-					}
-						
-					publish("outbounds.updateConfigJson"); 
+					removeOutbounds();
 				});	
 				
 				popmenu.add("重置为默认服务器列表",
@@ -651,15 +711,7 @@ frmXray.listview.onnotify = function(id,code,ptr){
 			popmenu.add()
 			
 			popmenu.add('删除服务器',function(id){
-				if(currentIdx){
-					for(i=#selectedItems;1;-1){
-  						var item = selectedItems[i] 
-						frmXray.listview.delItem(item);
-						..table.remove(config.proxy.outbounds,item);
-					}
-					 
-					publish("outbounds.updateConfigJson");
-				}
+				removeOutbounds(selectedItems);
 			});
 				
 			popmenu.add('清空服务器列表',function(id){
@@ -671,14 +723,7 @@ frmXray.listview.onnotify = function(id,code,ptr){
 			});
 			
 			popmenu.add('自动清除「不可用」服务器',function(id){
-				for(i=#config.proxy.outbounds;1;-1){ 
-					if(frmXray.listview.getItemText(i,7)=="不可用"){
-						..table.remove(config.proxy.outbounds,i);
-						frmXray.listview.delItem(i);
-					} 
-				}
-					
-				publish("outbounds.updateConfigJson"); 
+				removeOutbounds();
 			});	
 			
 			popmenu.add("重置为默认服务器列表",
@@ -713,7 +758,7 @@ frmXray.listview.onnotify = function(id,code,ptr){
 // 排序函数
 frmXray.listview.sortBySpeed = function () {
 	if(frmXray.btnTcping.disabledText){
-		frmXray.msgWarn("请等待检测速度完成，然后再点击此排序列。");
+		frmXray.msgWarn("请等待测速完成，然后再点击此排序列。");
     	return;
 	}
 	
@@ -815,7 +860,7 @@ subscribe("uiCommand.restartXrayCore",function(){
 		}
 	}
 	frmXray.listview.setTable(outbounds);	 
-	
+ 
 	frmXray.btnTcping.oncommand();
 } )
 

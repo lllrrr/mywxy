@@ -144,6 +144,15 @@ write  = function(jsonPath,outbound,sockPort,httpPort){
 				}
 			}
 		}
+		elseif( outbound.network == "quic" ){ 
+			ob.streamSettings.kcpSettings = {
+				key = outbound.key; 
+				security = outbound.security ? outbound.security : "none";
+				header = {
+					type = outbound.type;
+				}
+			}
+		}
 		
 		..table.assign(current.outbounds[1],ob); 
 	}
@@ -247,6 +256,15 @@ write  = function(jsonPath,outbound,sockPort,httpPort){
 				downlinkCapacity = outbound.downlinkCapacity;
 				readBufferSize = outbound.readBufferSize;
 				writeBufferSize = outbound.writeBufferSize;
+				header = {
+					type = outbound.type;
+				}
+			}
+		}
+		elseif( outbound.network == "quic" ){ 
+			ob.streamSettings.kcpSettings = {
+				key = outbound.key; 
+				security = outbound.security ? outbound.security : "none";
 				header = {
 					type = outbound.type;
 				}

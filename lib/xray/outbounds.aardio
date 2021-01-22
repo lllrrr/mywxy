@@ -53,16 +53,19 @@ exportSharedLinks = function(outbounds){
 			var vless = "vless://" + outbound.id + "@" + outbound.address + ":" + outbound.port;
 			 
 			var info = {};
-			if(outbound.network!="tcp") info.network = outbound.network;
-			if(outbound.security!="none") info.security = outbound.security; 
-			if(outbound.tls) info.tls = outbound.tls;
+			if(outbound.network!="tcp") info.type = outbound.network ;
+			if(outbound.security!="none") info.encryption = outbound.security; 
+			if(outbound.tls) info.security = outbound.tls;
 			if(outbound.flow) info.flow = outbound.flow;
-			if(outbound.allowInsecure!==null) info.allowInsecure = outbound.allowInsecure;
+			if(outbound.allowInsecure) info.allowInsecure = outbound.allowInsecure;
 			if(outbound.alpn) info.alpn = outbound.alpn;
 			if(outbound.disableSessionResumption) info.disableSessionResumption = outbound.disableSessionResumption;
 			if(outbound.sni){ info.sni = outbound.sni;}
 			info.host = outbound.host;
-			info.path = outbound.path;  
+			info.path = outbound.path;
+			info.seed = info.seed; 
+			info.key = info.key; 
+			info.headerType = info.type;
 			
 			if(..table.count(info)){
 				vless = ..inet.url.appendExtraInfo(vless,info) 
@@ -194,7 +197,24 @@ importFromString = function(str,subscribeUrl){
 		if(!str){
 			return;
 		}
-		..publish("uiCommand.subscriptionNew",subscribeUrl);
+		
+		var existIndex;
+		var cfgSubscribeUrls = ..config.proxy.subscribeUrls : ..table.array();
+		for(i=#cfgSubscribeUrls;1;-1){
+    		var sub = cfgSubscribeUrls[i]  
+    		if(sub.url==subscribeUrl){ 
+    			sub.checked="启用";
+    			existIndex=i;
+    			break;
+    		}
+		} 
+		if(!existIndex){
+			..table.push(cfgSubscribeUrls,{url=subscribeUrl;ps="";checked="启用"})
+		}  
+		..config.proxy.subscribeUrls = cfgSubscribeUrls;
+		..config.proxy.save();
+		
+		..publish("uiCommand.subscriptionNew",subscribeUrl,existIndex);
 		
 		var jsonData;
 		if(..string.match(str,"%\[\]") || ..string.match(str,"%\{\}")){
@@ -224,6 +244,49 @@ importFromString = function(str,subscribeUrl){
 		}
 		
 		if(line[1]=='/'# && line[2]=='/'#){
+			continue;
+		}
+		
+		var vmess2 = ..string.match(line,`vmess\:\/\/[^\@\s]+\@[^\?\#\s\:]+\:\d+\S*`);
+		if( vmess2 ) {
+			var vmessUrl = ..inet.url.split(vmess2) 
+			if(vmessUrl.user && vmessUrl.host && vmessUrl.port){
+				var outbound = {
+					address = vmessUrl.host;
+					port = tonumber(vmessUrl.port) : 443; 
+					id = vmessUrl.user;
+					network = "tcp";
+					protocol = "vmess";
+					tls = "tls";
+				};
+				
+				if(vmessUrl.extraInfo){
+					var info = ..inet.url.splitParameters(vmessUrl.extraInfo);
+					outbound.sni = info.sni;
+					outbound.host = info.host;
+					outbound.path = info.path;
+					outbound.security = info.encryption;
+					outbound.seed = info.seed; 
+					outbound.key = info.key; 
+					
+					outbound.network = info.type;
+					outbound.type = info.headerType; //kcp || quic
+					
+					if(info.security) outbound.tls = info.security;
+					if(info.flow) outbound.flow = info.flow;
+					if(info.allowInsecure!==null) outbound.allowInsecure = info.allowInsecure;
+					if(info.disableSessionResumption) outbound.disableSessionResumption = info.disableSessionResumption;
+					if(info.alpn) outbound.alpn = info.alpn;	 
+				}
+				
+				if(vmessUrl.location){
+					outbound.ps = ..inet.url.decode(vmessUrl.location);
+				}
+	
+				outbound.subscribeUrl = subscribeUrl;
+				..table.push(outbounds,outbound);
+			} 
+			
 			continue;
 		}
 
@@ -279,9 +342,14 @@ importFromString = function(str,subscribeUrl){
 					outbound.sni = info.sni;
 					outbound.host = info.host;
 					outbound.path = info.path;
-					outbound.network = info.network
-					outbound.security = info.security; 
-					if(info.tls) outbound.tls = info.tls;
+					outbound.security = info.encryption;
+					outbound.seed = info.seed; 
+					outbound.key = info.key; 
+					
+					outbound.network = info.type;
+					outbound.type = info.headerType; //kcp || quic
+					
+					if(info.security) outbound.tls = info.security;
 					if(info.flow) outbound.flow = info.flow;
 					if(info.allowInsecure!==null) outbound.allowInsecure = info.allowInsecure;
 					if(info.disableSessionResumption) outbound.disableSessionResumption = info.disableSessionResumption;

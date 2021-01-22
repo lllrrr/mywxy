@@ -1,5 +1,5 @@
 {
 updateUrl="https://raw.githubusercontent.com/winXray/winXray/master/release/update/";
-description="发布 v1.9，优化代码，改进断网检测，支持导入  Clash proxy-provider 配置以及订阅链接。";
+description="发布 v2.0，优化代码 + 兼容 VMessAEAD / VLESS  分享链接官方提案 XTLS/Xray-core#91";
 outputDir="/release/update/"
 }

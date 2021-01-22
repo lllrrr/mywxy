@@ -79,18 +79,13 @@ winform.loadSubscriptionsOnce = function(){
 	winform.loadSubscriptionsOnce = function(){};
 }
 
-subscribe("uiCommand.subscriptionNew",function(url){
-	var cfgSubscribeUrls = config.proxy.subscribeUrls;
-	for(i=#cfgSubscribeUrls;1;-1){
-    	var sub = cfgSubscribeUrls[i]  
-    	if(sub.url==url){ 
-    		winform.listview.setChecked(i,true);
-    		return;
-    	}
-	} 
-		
-	..table.push(cfgSubscribeUrls,{url=url;ps="";checked="启用"})
-	var item = winform.listview.addItem({"","启用","",url});
+subscribe("uiCommand.subscriptionNew",function(subscribeUrl,existIndex){ 
+    if(existIndex){ 
+    	winform.listview.setChecked(existIndex,true);
+    	return;
+    } 
+		 
+	var item = winform.listview.addItem({"","启用","",subscribeUrl});
 	winform.listview.setChecked(item,true);
 } ) 
 
