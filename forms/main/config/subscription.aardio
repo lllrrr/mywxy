@@ -83,9 +83,9 @@ winform.loadSubscriptionsOnce = function(){
 	winform.loadSubscriptionsOnce = function(){};
 }
 
-subscribe("uiCommand.subscriptionNew",function(subItem,existIndex){ 
+subscribe("uiCommand.subscriptionNew",function(subItem,existIndex){
 	if(existIndex){ 
-		winform.listview.setItemText(subItem.url,iItem,4); 	
+		winform.listview.setItemText(subItem.url,existIndex,4); 	
 		winform.listview.setChecked(existIndex,true);
 		return;
 	} 
@@ -98,7 +98,7 @@ subscribe("uiCommand.subscriptionNew",function(subItem,existIndex){
 grid.onEditChanged = function(text,iItem,iSubItem){
 	var name = config.proxy.subscribeUrls.fields[iSubItem] 
 	var sub = config.proxy.subscribeUrls[iItem];
-	
+
 	if( name==="url" ){ 
 		if( text[1]=='/'#) {
 			text = "https://github.com"+text;
@@ -126,6 +126,14 @@ grid.onEditChanged = function(text,iItem,iSubItem){
 winform.popmenu = win.ui.popmenu(winform);//创建弹出菜单
 winform.popmenu.add('删除',function(id){
 	winform.btnRemove.oncommand();
+});
+winform.popmenu.add('全部删除',function(id){ 
+    for(i=1; winform.listview.count)  winform.listview.setSelected(i,true);
+	winform.btnRemove.oncommand();
+});
+winform.popmenu.add();
+winform.popmenu.add('自剪贴板添加订阅',function(id){ 
+    winform.btnAdd.oncommand();
 });
 
 winform.btnUpdate.skin(style.primaryButton);
@@ -206,23 +214,34 @@ winform.btnRemove.oncommand = function(id,event){
 		win.delay(200);
 	}
 	
+	publish("outbounds.updateConfigJson"); 
 	winform.btnUpdate.disabledText = null;
 }
 
 winform.btnAdd.oncommand = function(id,event){
-	
-	
 	import inet.url;
 	import win.clip;
+	
+	var ps = "订阅源";
 	var url = win.clip.read();
 	url = url ? string.trim(url,'"\'\s\t\r\n ');
+	if(url && url[1]=='/'#){
+		url = "http://github.com" + url;
+	}
+	
 	if(!inet.url.is(url)){
 		url = "";
 	}
+	else {
+		var tUrl = inet.url.split(url);
+		if(tUrl && tUrl.host){
+			ps = tUrl.host
+		}
+	} 
 	
 	config.proxy.subscribeUrls[winform.listview.count+1] = {checked="启用";ps="订阅源";url=url}
 	var item = winform.listview.addItem({
-		"";"启用";"订阅源";url
+		"";"启用";ps;url
 	})
 	
 	winform.listview.setChecked(item,true);

@@ -236,8 +236,6 @@ importFromString = function(str,subscribeUrl){
 		..config.proxy.subscribeUrls = cfgSubscribeUrls;
 		..config.proxy.save();
 		
-		
-		
 		var jsonData;
 		if(..string.match(str,"%\[\]") || ..string.match(str,"%\{\}")){
 			jsonData = ..web.json.tryParse(str);
@@ -537,7 +535,11 @@ importFromString = function(str,subscribeUrl){
 					outbound.protocol = outbound.type;
 					outbound.type = null;
 				}
-				if( validOutbound(outbound) ) ..table.push(outbounds,outbound );
+				
+				if( validOutbound(outbound) ){
+					outbound.subscribeUrl = subscribeUrl; 
+					..table.push(outbounds,outbound );
+				}
 				continue;
 			}
 		}
