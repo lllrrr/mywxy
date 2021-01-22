@@ -45,7 +45,7 @@ updateCore = function(){
 	 
 	
 	import zlib.httpFile;
-	if( ..zlib.httpFile.download(url,"正在下载 Xray Core"
+	if( ..zlib.httpFile.download(url,"正在下载 Xray Core，版本：" + versionTag
 		,..io.appData("/winXray/download/")
 		,..io.appData("/winXray/temp/v2ray/"),,..mainForm.hwnd) ){
 			..mainForm.disabled = false;

@@ -5,12 +5,13 @@ var winform = win.form(text="aardio form";right=912;bottom=793;bgcolor=16777215)
 winform.add(
 advancedConfig={cls="\forms\main\config\advancedConfig.aardio";left=9;top=29;right=902;bottom=739;bgcolor=16777215;db=1;dl=1;dr=1;dt=1;edge=1;z=10};
 btnUpdate={cls="plus";text="更新服务器配置";left=687;top=753;right=856;bottom=784;align="left";bgcolor=11580047;db=1;dr=1;font=LOGFONT(h=-13);iconStyle={align="left";font=LOGFONT(h=-13;name='FontAwesome');padding={left=22}};iconText='\uF0C7';notify=1;textPadding={left=40};z=5};
-btnUpdateSsrCore={cls="plus";text="下载 / 更新 SSR Core";left=433;top=3;right=631;bottom=36;align="left";color=3947580;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={align="left";font=LOGFONT(h=-19;name='FontAwesome');padding={left=18}};iconText='\uF1D8';notify=1;textPadding={left=50};z=15};
-btnUpdateV2RayCore={cls="plus";text="下载 / 更新 V2Ray Core";left=16;top=3;right=223;bottom=36;align="left";color=3947580;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={align="left";font=LOGFONT(h=-19;name='FontAwesome');padding={left=18}};iconText='\uF27D';notify=1;textPadding={left=50};z=13};
-btnUpdateXrayCore={cls="plus";text="下载 / 更新 Xray Core";left=229;top=3;right=427;bottom=36;align="left";color=3947580;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={align="left";font=LOGFONT(h=-19;name='FontAwesome');padding={left=18}};iconText='\uF0E7';notify=1;textPadding={left=50};z=14};
+btnUpdateRules={cls="plus";text="下载 / 更新 路由规则";left=638;top=3;right=836;bottom=31;align="left";color=3947580;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={align="left";font=LOGFONT(h=-19;name='FontAwesome');padding={left=18}};iconText='\uF041';notify=1;textPadding={left=50};z=15};
+btnUpdateSsrCore={cls="plus";text="下载 / 更新 SSR Core";left=434;top=3;right=632;bottom=31;align="left";color=3947580;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={align="left";font=LOGFONT(h=-19;name='FontAwesome');padding={left=18}};iconText='\uF1D8';notify=1;textPadding={left=50};z=16};
+btnUpdateV2RayCore={cls="plus";text="下载 / 更新 V2Ray Core";left=16;top=3;right=223;bottom=31;align="left";color=3947580;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={align="left";font=LOGFONT(h=-19;name='FontAwesome');padding={left=18}};iconText='\uF27D';notify=1;textPadding={left=50};z=13};
+btnUpdateXrayCore={cls="plus";text="下载 / 更新 Xray Core";left=229;top=3;right=427;bottom=31;align="left";color=3947580;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={align="left";font=LOGFONT(h=-19;name='FontAwesome');padding={left=18}};iconText='\uF0E7';notify=1;textPadding={left=50};z=14};
 editCoreConfig={cls="edit";left=9;top=38;right=902;bottom=739;db=1;dl=1;dr=1;dt=1;edge=1;hide=1;hscroll=1;multiline=1;vscroll=1;z=8};
-editOutbounds={cls="edit";left=9;top=29;right=902;bottom=739;db=1;dl=1;dr=1;dt=1;edge=1;hscroll=1;multiline=1;vscroll=1;z=7};
-lbTip={cls="static";text="可在下面输入多行服务器分享链接，或JSON数组( 点击字段名会显示用法说明 )：";left=11;top=9;right=899;bottom=29;color=3947580;dl=1;dr=1;dt=1;font=LOGFONT(h=-13);transparent=1;z=6};
+editOutbounds={cls="edit";left=9;top=29;right=902;bottom=739;db=1;dl=1;dr=1;dt=1;edge=1;hscroll=1;multiline=1;vscroll=1;z=6};
+lbTip={cls="static";text="可在下面输入多行服务器分享链接，或JSON数组( 点击字段名会显示用法说明 )：";left=11;top=9;right=899;bottom=29;color=3947580;dl=1;dr=1;dt=1;font=LOGFONT(h=-13);transparent=1;z=7};
 navAdvancedConfig={cls="plus";text="代理端口 / 高级配置";left=359;top=750;right=493;bottom=782;border={top=1;color=-16744448};db=1;dl=1;z=9};
 navCoreConfig={cls="plus";text="Core 配置 ( JSON )";left=162;top=750;right=293;bottom=782;border={top=1;color=-16744448};db=1;dl=1;z=2};
 navOutbounds={cls="plus";text="服务器配置( JSON )";left=31;top=750;right=162;bottom=782;border={top=1;color=-16744448};db=1;dl=1;z=1};
@@ -54,7 +55,8 @@ tbs.onSelchange = function(idx,strip,form){
 		winform.btnUpdateSsrCore.hide = true;
 		winform.btnUpdateV2RayCore.hide = true;
 		winform.btnUpdateXrayCore.hide = true;
-		
+		winform.btnUpdateRules.hide = true;
+
 		winform.btnUpdate.text = "更新服务器配置";
 		winform.btnUpdate.hide = false;
 	}
@@ -68,6 +70,7 @@ tbs.onSelchange = function(idx,strip,form){
 		winform.btnUpdateSsrCore.hide = false;
 		winform.btnUpdateV2RayCore.hide = false;
 		winform.btnUpdateXrayCore.hide = false;
+		winform.btnUpdateRules.hide = false;
 		
 		winform.btnUpdate.text = "更新内核配置 "
 		winform.btnUpdate.hide = false;
@@ -77,12 +80,13 @@ tbs.onSelchange = function(idx,strip,form){
 		winform.subscription.hide = false;
 		winform.editOutbounds.hide = true;
 		winform.advancedConfig.hide = true;
-		winform.editCoreConfig.hide = true; 
+		winform.editCoreConfig.hide = true;  
 
 		winform.lbTip.hide = true;
 		winform.btnUpdateSsrCore.hide = true;
 		winform.btnUpdateV2RayCore.hide = true;
 		winform.btnUpdateXrayCore.hide = true;
+		winform.btnUpdateRules.hide = true;
 		
 		winform.btnUpdate.hide = true;
 		winform.subscription.loadSubscriptionsOnce();
@@ -97,6 +101,7 @@ tbs.onSelchange = function(idx,strip,form){
 		winform.btnUpdateSsrCore.hide = true;
 		winform.btnUpdateV2RayCore.hide = true;
 		winform.btnUpdateXrayCore.hide = true;
+		winform.btnUpdateRules.hide = true;
 		
 		winform.btnUpdate.hide = true;
 	}	
@@ -549,12 +554,28 @@ winform.editOutbounds.enablePopMenu(function(){
 
 winform.editCoreConfig.enablePopMenu({ 
 	{ /*---分隔线---*/ };
-	{ "重置为默认 V2Ray 配置";
+	{ "重置为默认内核配置";
 		function(id){  
-			config.__resetDefaultCore();
+			winform.editCoreConfig.text = ..string.load("\forms\main\config\coreConfigs\default.json") 
+			winform.editCoreConfig.msgOk('已重置为默认内核配置。\n请在下面点击：『更新内核配置』启用新的配置。',1300)
+		} 
+	}; 
+	{ "重置为启用路由规则默认内核配置";
+		function(id){  
+			winform.editCoreConfig.text = ..string.load("\forms\main\config\coreConfigs\v2ray.rules.json")
+			import v2ray.core.rules;
+			var versionTag = v2ray.core.rules.check();
+			if(versionTag) winform.editCoreConfig.msgOk('已重置为启用路由规则默认内核配置，\n已下载路由规则数据最新版本：' + versionTag+ '\n\n请在下面点击：『更新内核配置』启用新的配置。',2000)
+			else winform.msgOk('已重置为启用路由规则默认内核配置，\n请在下面点击：『更新内核配置』启用新的配置。',1300)
+		} 
+	};  
+	{ "恢复到当前正在使用的内核配置";
+		function(id){   
 			winform.editCoreConfig.text = web.json.stringify( 
 				config.core.default,true
 			)
+
+			winform.editCoreConfig.msgOk('已恢复到当前正在使用的内核配置',1300)
 		} 
 	}; 
 } )
@@ -696,6 +717,23 @@ winform.btnUpdateXrayCore.oncommand = function(id,event){
 	} 
 	
 	winform.btnUpdateV2RayCore.disabled = false;
+}
+
+winform.btnUpdateRules.skin(style.plainButton)
+winform.btnUpdateRules.oncommand = function(id,event){
+     
+	winform.btnUpdateRules.disabledText = {'\uF254';'\uF251';'\uF252';'\uF253';'\uF250'};
+	 
+	import v2ray.core.rules;
+	var versionTag = v2ray.core.rules.update();
+	if( versionTag ){
+		publish("uiCommand.restartV2RayCore");
+		winform.btnUpdateRules.disabledText = null;
+		winform.msgOk('已下载路由规则到最新版本：' + versionTag+ '\n请在下面的配置编辑器点击右键,然后点击：\n『重置为启用路由规则默认内核配置』',2000)
+	}
+	else {
+		winform.btnUpdateRules.disabledText = null;
+	}  
 }
 
 winform.show();
