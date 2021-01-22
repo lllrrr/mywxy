@@ -215,10 +215,10 @@ importFromString = function(str,subscribeUrl){
 	
 	var outbounds = ..table.array();
 	for(line in ..string.lines(str) ){
-		if(#outbounds>=300){
+		if(#outbounds>=1600){
 			import win.dlg.message;
 			var msgDlg = win.dlg.message(..mainForm); 
-			var form = msgDlg.warn("导入的节点数目过多，已导入300个节点并中止操作！")
+			var form = msgDlg.warn("导入的节点数目过多，已导入1600个节点并中止操作！")
 		
 			return outbounds;
 		}
@@ -498,7 +498,6 @@ validOutbound = function(outbound){
 		if(outbound.server){
 			outbound.address = outbound.server;
 			outbound.server = null;
-			..table.define(outbound);
 		}
 	}
 	
@@ -506,9 +505,22 @@ validOutbound = function(outbound){
 		if(outbound.remarks){
 			outbound.ps = outbound.remarks;
 			outbound.remarks = null;
-			..table.define(outbound);
 		}
 	} 
+ 
+	if(!outbound.port){
+		if(outbound.server_port){
+			outbound.port = outbound.server_port;
+			outbound.server_port = null; 
+			
+			if(!outbound.protocol && outbound.password){
+				outbound.protocol = "shadowsocks";
+			}
+		}
+		else {
+			outbound.port=443;
+		} 
+	}
 	
 	if(!outbound.protocol){
 		outbound.protocol = "vmess";
@@ -517,11 +529,15 @@ validOutbound = function(outbound){
 		}
 	}
 	
-	if(!outbound.port){
-		outbound.port=443;
-	} 
+	if(!outbound.id){
+		if(outbound.password){
+			outbound.id = outbound.password;
+			outbound.password = null; 
+		} 
+	}  
 	
 	outbound.v = null;
+	..table.define(outbound);
 	
 	if(outbound.address){
 		return outbound;

@@ -36,6 +36,10 @@ if(!config.proxy.testInterval){
 	config.proxy.testInterval = 15;
 }
 
+if(!config.proxy.maxTestServers){
+	config.proxy.maxTestServers = 100;
+}
+
 if(!config.proxy.subscribeUrls){
 	config.proxy.subscribeUrls = {
 		fields =  {"";"checked";"ps";"url";}
