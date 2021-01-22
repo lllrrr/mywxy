@@ -12,7 +12,7 @@ btnImportSharedLink={cls="plus";text="导入";left=912;top=471;right=984;bottom=
 btnInsertField={cls="plus";text="插入更多配置字段";left=10;top=0;right=191;bottom=24;align="left";dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={align="left";font=LOGFONT(h=-13;name='FontAwesome');padding={left=12}};iconText='\uF196 ';notify=1;textPadding={left=30};z=18};
 btnSaveOutbound={cls="plus";text="保 存";left=784;top=427;right=887;bottom=463;align="left";bgcolor=11580047;db=1;disabled=1;dr=1;font=LOGFONT(h=-13);iconStyle={align="left";font=LOGFONT(h=-13;name='FontAwesome');padding={left=22}};iconText='\uF0C7';notify=1;textPadding={left=40};z=16};
 cmbNetwork={cls="combobox";left=656;top=70;right=814;bottom=96;dr=1;dt=1;edge=1;items={"tcp";"kcp";"ws";"h2";"quic"};mode="dropdown";z=13};
-cmbProtocol={cls="combobox";left=656;top=28;right=814;bottom=54;dr=1;dt=1;edge=1;items={"vmess";"vless";"trojan";"trojan-go";"shadowsocks"};mode="dropdown";z=12};
+cmbProtocol={cls="combobox";left=656;top=28;right=814;bottom=54;dr=1;dt=1;edge=1;items={"vmess";"vless";"trojan";"trojan-go";"ssr";"shadowsocks";"socks"};mode="dropdown";z=12};
 cmbSecurity={cls="combobox";left=656;top=113;right=814;bottom=139;dr=1;dt=1;edge=1;items={"auto";"none";"chacha20-poly1305";"aes-128-gcm"};mode="dropdown";z=15};
 editAddress={cls="plus";left=656;top=156;right=878;bottom=180;align="left";bgcolor=16777215;border={bottom=1;color=-8355712};dr=1;dt=1;editable="edit";font=LOGFONT(h=-16);textPadding={bottom=1};z=2};
 editId={cls="plus";left=656;top=236;right=986;bottom=260;align="left";bgcolor=16777215;border={bottom=1;color=-8355712};clip=1;dr=1;dt=1;editable="edit";font=LOGFONT(h=-16);textPadding={right=75;bottom=1};z=20};
@@ -49,6 +49,12 @@ winform.cmbProtocol.onListChange = function(){
 		}
 		winform.cmbSecurity.selIndex = 1;
 		winform.outboundConfig.security = "auto";
+		
+		winform.cmbNetwork.items = {
+			"tcp";"kcp";"h2";"quic";
+		}
+		winform.cmbNetwork.selIndex = 1;
+		winform.outboundConfig.network = "tcp";
 	}
 	elseif(sel=="shadowsocks"){
 		winform.cmbSecurity.items = {
@@ -56,6 +62,23 @@ winform.cmbProtocol.onListChange = function(){
 		}
 		winform.cmbSecurity.selIndex = 1;
 		winform.outboundConfig.security = "aes-256-gcm";
+		
+		winform.cmbNetwork.items = {"tcp";}
+		winform.cmbNetwork.selIndex = 1;
+		winform.outboundConfig.network = "tcp";
+	}
+	elseif(sel=="ssr"){
+		winform.cmbNetwork.items = {
+			"origin";"verify_simple";"verify_deflate";"verify_sha1";"auth_simple";"auth_sha1";"auth_sha1_v2";"auth_sha1_v4";"auth_aes128_md5";"auth_aes128_sha1";
+		}
+		winform.cmbNetwork.selIndex = 1;
+		winform.outboundConfig.network = "origin";
+		
+		winform.cmbSecurity.items = {
+			"none";"table";"rc4";"rc4-md5";"aes-128-cfb";"aes-192-cfb";"aes-256-cfb";"aes-128-ctr";"aes-192-ctr";"aes-256-ctr";"bf-cfb";"camellia-128-cfb";"camellia-192-cfb";"camellia-256-cfb";"cast5-cfb";"des-cfb";"idea-cfb";"rc2-cfb";"seed-cfb";"salsa20";"chacha20andchacha20-ietf";
+		}
+		winform.cmbSecurity.selIndex = 1;
+		winform.outboundConfig.security = "none";  
 	}
 	elseif(sel=="vless"){
 		winform.cmbSecurity.items = {
@@ -63,12 +86,22 @@ winform.cmbProtocol.onListChange = function(){
 		}
 		winform.cmbSecurity.selIndex = 1;
 		winform.outboundConfig.security = "none";
+		
+		winform.cmbNetwork.items = {
+			"tcp";"kcp";"h2";"quic";
+		}
+		winform.cmbNetwork.selIndex = 1;
+		winform.outboundConfig.network = "tcp";
 	}
 	else {
 		winform.cmbSecurity.items = { }	
 		winform.outboundConfig.security = null;
+		
+		winform.cmbNetwork.items = {"tcp";}
+		winform.cmbNetwork.selIndex = 1;
+		winform.outboundConfig.network = "tcp";
 	} 
-	
+
 	table.define(winform.outboundConfig);
 	winform.outboundConfig.protocol = sel;
 	winform.editOutbound.text = web.json.stringify(winform.outboundConfig,true,false);
@@ -117,7 +150,7 @@ var editOutboundTip = {
 	address = {"代理服务器地址";"值可以是域名或者IP地址"};
 	alterId = {"额外ID";"仅用于VMESS协议，与服务器一致即可"};
 	aid = {"额外ID(alterId)";"数值,仅用于VMESS协议，与服务器一致即可"};
-	network = {"传输协议(network)";"可选值为tcp,ws等"};
+	network = {"传输协议(network)";"可选值为tcp,ws等，也可以放 SSR 的 protocol 值"};
 	net = {"传输协议(network)";"可选值为tcp,ws等"};
 	type = {"伪装类型";"默认的可选值为none,http等,kcp或quic此字段表示header.type，可选值为 none,srtp,utp,wechat-video,dtls,wireguard"}; 
 	ps = {"备注";"备注"}; 
@@ -132,6 +165,9 @@ var editOutboundTip = {
 	security = {"加密方式";"可省略,vmess协议默认为auto,vless协议默认为none"};
 	sni = {"TLS服务器名";"TLS客户端请求中的服务器名字段,如果不指定则默认取host或address字段值。"}; 
 	flow = {"流控";"目前仅用于选择 XTLS 的算法,省略时默认值为xtls-rprx-direct"}; 
+	obfs = {"混淆插件";"可选值：plain,http_simple,http_post,tls1.2_ticket_auth ..."}; 
+	obfsParam = {"混淆参数";"SSR 里的 obfs_param"}; 
+	networkParam = {"SSR网络协议参数";"SSR 里的 protocol_param"}; 
 	concurrency = {"Mux多路复用:最大并发连接数";"最小值1，最大值1024，特殊值-1，不加载mux模块。缺省由winXray根据连接协议自动设定此值。"}; 
 }
 
@@ -209,6 +245,21 @@ var insertFieldMenu = {
 	{ "HTTP请求头:headers";
 		function(id){
 			winform.addOutboundField("headers",{method="GET"});
+		} 
+	};
+	{ "SSR混淆插件:obfs";
+		function(id){
+			winform.addOutboundField("obfs","plain");
+		} 
+	};
+	{ "SSR混淆参数:obfsParam";
+		function(id){
+			winform.addOutboundField("obfsParam","");
+		} 
+	};
+	{ "SSR网络协议参数:networkParam";
+		function(id){
+			winform.addOutboundField("networkParam","");
 		} 
 	};
 	{ "绑定的订阅网址:subscribeUrl";
@@ -318,8 +369,8 @@ winform.btnSaveOutbound.oncommand = function(id,event){
 		return winform.editPort.editBox.showErrorTip("配置错误","端口不能为空")
 	}
 	
-	if(!#winform.editId.text){
-		return winform.editId.editBox.showErrorTip("配置错误","密码不能为空")
+	if(!#winform.editId.text && (winform.outboundConfig.protocol!="socks") ){
+		return winform.editId.editBox.showErrorTip("配置错误","当前代理协议密码不能为空")
 	}
 	
 	table.assign(winform.origOutboundConfig,winform.outboundConfig);
@@ -338,8 +389,8 @@ winform.btnAddOutbound.oncommand = function(id,event){
 		return winform.editPort.editBox.showErrorTip("配置错误","端口不能为空")
 	}
 	
-	if(!#winform.editId.text){
-		return winform.editId.editBox.showErrorTip("配置错误","密码不能为空")
+	if(!#winform.editId.text && (winform.outboundConfig.protocol!="socks") ){
+		return winform.editId.editBox.showErrorTip("配置错误","当前代理协议密码不能为空")
 	}
 	
 	table.push(config.proxy.outbounds,winform.outboundConfig); 
@@ -381,7 +432,8 @@ import v2ray.outbounds;
 winform.updateSharedLink = function(modified){ 
 	var cfg = winform.outboundConfig;
 	var link = "";
-	if(#cfg.address && (cfg.port!==null) && #cfg.id && #cfg.protocol){
+	 
+	if(#cfg.address && (cfg.port!==null) && #cfg.protocol){
 		link = v2ray.outbounds.exportSharedLinks({winform.outboundConfig});
 	}
 	
@@ -407,7 +459,7 @@ winform.btnImportSharedLink.oncommand = function(id,event){
 		}
 	}
 
-	winform.msgFrown('未导入服务器！\r\n请先复制以下格式文本（自动清除其中的无效内容）：\r\n\r\n1、分享链接或服务器JSON配置。\r\n支持 vmess://，vless://，ss://，trojan://， trojan-go:// 等通用分享链接。\r\n\r\n2、服务器配置的JSON数组,支持winXray格式以及通用格式JSON。\r\n其他 BASE64 编码或明文返回以上1、2条规定的配置或分享链接。')
+	winform.msgFrown('未导入服务器！\r\n请先复制以下格式文本（自动清除其中的无效内容）：\r\n\r\n1、分享链接或服务器JSON配置。\r\n支持 vmess://，vless://，ss://，ssr://，trojan://， trojan-go:// 等通用分享链接。\r\n\r\n2、服务器配置的JSON数组,支持winXray格式以及通用格式JSON。\r\n其他 BASE64 编码或明文返回以上1、2条规定的配置或分享链接。')
 }
  
 winform.btnCopySharedLink.skin(style.link)

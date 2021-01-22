@@ -1,5 +1,5 @@
 {
-updateUrl="https://raw.githubusercontent.com/winXray/winXray/master/release/update/";
-description="发布v2.7, 修正已知BUG，优化界面, 重新整理并精简了说明文档、入门教程等。尽量不浪费大家宝贵的时间。";
-outputDir="/release/update/"
+updateUrl="https://raw.githubusercontent.com/winXray/winXray/master/release/update32/";
+description="发布v3.0, 新增支持 SSR ，仔细调优界面与代码，争取操作更省心不浪费大家时间";
+outputDir="/release/update32/"
 }

@@ -1,7 +1,7 @@
 ﻿// 号开头为注释行。
 // 本文件用于指定默认服务器列表。
 // 本文件可以直接输入json格式的服务器数组（ 服务器可以使用subscribeUrl字段指定订阅源地址，可以指定"autoConnect":false字段禁止自动连接 ）
-// 也可以每行一个 vless://、vmess://、trojan、trojan-go、ss:// 等分享链接
+// 也可以每行一个 vless://、vmess://、trojan、trojan-go、ss://、ssr://， 等分享链接
 [
     {
         "address":"服务器地址",  

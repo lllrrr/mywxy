@@ -151,7 +151,6 @@ else {
 		return 0;	
 	}
 } 
-
 /*}}*/
 
 import fonts.fontAwesome;
@@ -159,7 +158,7 @@ import win.ui;
 /*DSG{{*/
 mainForm = win.form(text="winXray";right=1019;bottom=679;bgcolor=15793151;border="none")
 mainForm.add(
-caption={cls="bkplus";text="winXray 2.7";left=67;top=9;right=727;bottom=27;align="left";color=6052956;dl=1;dt=1;font=LOGFONT(h=-14);z=7};
+caption={cls="bkplus";text="winXray 3.0";left=67;top=9;right=727;bottom=27;align="left";color=6052956;dl=1;dt=1;font=LOGFONT(h=-14);z=7};
 custom={cls="custom";left=83;top=40;right=1022;bottom=679;bgcolor=16777215;db=1;dl=1;dr=1;dt=1;z=4};
 logo={cls="bkplus";text='\uF1D9';left=35;top=7;right=64;bottom=32;color=3054125;dl=1;dt=1;font=LOGFONT(h=-18;name='FontAwesome');z=6};
 navBar={cls="bkplus";left=0;top=37;right=83;bottom=681;bgcolor=3442175;db=1;dl=1;dt=1;z=1};
@@ -175,12 +174,6 @@ var atom,hwnd = mainForm.atom("DFA5667E-1D8C-49C0-8918-C6FEC2DECCF8");
 if(!atom){
 	win.showForeground(hwnd);
 	win.quitMessage();	
-	return;
-}
-
-import v2ray.core;
-if(!v2ray.core.getPath()) {
-	mainForm.close();
 	return;
 }
 
@@ -218,6 +211,7 @@ tbs.loadForm(3,"\forms\main\tools\tools.aardio");
 
 tbs.selIndex = 1;
 
+import v2ray.core;
 import win.ui.menu;
 mainForm.wndproc = {
 	[0xACCF/*_WM_TRAYMESSAGE*/ ] = function(hwnd,message,wParam,lParam){
@@ -232,9 +226,7 @@ mainForm.wndproc = {
 			});
 			mainForm.popmenu.add();
 			
-			import sysProxy;
 			import v2ray.core;
-			
 			var id = mainForm.popmenu.add('不使用代理',function(id){ 
 				sysProxy.switch("direct");  
 			});
@@ -286,7 +278,6 @@ mainForm.wndproc = {
 				process.openUrl("https://github.com/search?q=winXray+license%3AUnlicense+fork%3Atrue+sort%3Aupdated")
 			});
 			
-			import v2ray.core;
 			import chrome.path;
 			var chromePath = chrome.path();
 			if(chromePath && v2ray.core.socksProxyPort){
