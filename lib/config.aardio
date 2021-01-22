@@ -20,6 +20,9 @@ namespace config {
 
 if(!config.proxy.mode) config.proxy.mode = "pac";
 if(!config.proxy.pacPort) config.proxy.pacPort = 0;
+if(config.proxy.useHttpGlobal===null){
+	config.proxy.useHttpGlobal = !_WIN10_LATER;
+}
 
 if(config.proxy.enableGitConfigGithub===null){
 	config.proxy.enableGitConfigGithub = true;

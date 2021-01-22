@@ -22,9 +22,17 @@ switch = function(mode){
     }
     elseif(mode=="proxy"){ 
         import xray.core;
-        var port = ..xray.core.socksProxyPort;
-        if(port){
-        	..inet.conn.setProxy(,"SOCKS=127.0.0.1:"+port);
+        var httpProxPort = ..xray.core.httpProxPort;
+        var socksProxyPort = ..xray.core.socksProxyPort;
+        
+        if(socksProxyPort){
+            if(..config.proxy.useHttpGlobal){
+            	..inet.conn.setProxy(,"127.0.0.1:" + httpProxPort) 
+            }
+            else {
+            	..inet.conn.setProxy(,"SOCKS=127.0.0.1:"+socksProxyPort); 
+            }
+        	
     		..xray.github.setProxy(true); 	
         } 
     }

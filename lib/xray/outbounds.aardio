@@ -136,6 +136,13 @@ importFromString = function(str){
 			
 			return outbounds;
 		}
+		else {
+			if(jsonData.address && jsonData.protocol && jsonData.port){
+				return {
+					jsonData
+				}	
+			} 
+		} 
 	}
 	
 	var subscribeUrl;

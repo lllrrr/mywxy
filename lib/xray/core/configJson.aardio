@@ -19,6 +19,12 @@ write  = function(jsonPath,outbound,sockPort,httpPort){
 	inbounds[1].port = sockPort; 
 	if(inbounds[2]){ inbounds[2].port = httpPort; }
 	
+	if(#outbound.tls && !outbound.sni){
+		var host = outbound.host;
+		if(..table.isArray(host)){ host = host[1] } 
+		outbound.sni = host ? host : outbound.address
+	}
+	
 	if(outbound.protocol=="vless"){ 
 		if(!outbound.tls && outbound.port==443) outbound.tls = "tls";
 		if(!outbound.tls) outbound.tls = "tls";
