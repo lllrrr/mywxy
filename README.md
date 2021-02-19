@@ -7,7 +7,7 @@
 免费的服务器仅供测试（一定要走 PAC，不要开全局代理不要登录账号更不要长时间使用 ）。
 
 # winXray 
-winXray[:loud_sound:](http://dict.youdao.com/dictvoice?audio=winxray&type=2) 是最简洁轻快的 V2Ray、XRay、Trojan、Trojan、Trojan、Trojan-go、Shadowsocks、SSR(ShadowsocksR)、SSRoT、NaïveProxy，SOCKS，HTTP,HTTPS 全能通用客户端（Windows系统），支持并发检测大量服务器并迅速找到当前最快的服务器，服务器连接异常时可自动寻找其他速度最快的服务器 - 切换速度快如闪电，自订阅源获取的服务器异常时可自动刷新订阅，并且自带一键自动部署服务端工具。
+winXray[:loud_sound:](http://dict.youdao.com/dictvoice?audio=winxray&type=2) 是最简洁轻快的 V2Ray、XRay、Trojan、Trojan-go、Shadowsocks、SSR(ShadowsocksR)、SSRoT、NaïveProxy，SOCKS，HTTP,HTTPS 全能通用客户端（Windows系统），支持并发检测大量服务器并迅速找到当前最快的服务器，服务器连接异常时可自动寻找其他速度最快的服务器 - 切换速度快如闪电，自订阅源获取的服务器异常时可自动刷新订阅，并且自带一键自动部署服务端工具。
 
 **本软件源码已放弃版权贡献到公共域** ，源码可使用 [aardio](http://www.aardio.com) 编译生成单文件绿色EXE，**[点这里下载](./../../raw/master/release/winXray.7z)** （ [64位版本](./../../raw/master/release/winXray.7z) / [32位版本](./../../raw/master/release/winXray32.7z) ），解压即可直接使用( 体积很小仅  **[6.1 MB](./../../raw/master/release/winXray.7z)** - 已自带 V2Ray Core ）。  
 
@@ -20,17 +20,42 @@ winXray[:loud_sound:](http://dict.youdao.com/dictvoice?audio=winxray&type=2) 是
 
 最近又发现 TheMRLL 有一些很奇怪的行为。每次我发布新版，他就在后面复制粘贴然后改版本号发布，<span style="color:red">更奇怪的是他的 commits 基本都是伪造的，我用文件比较工具查了一下，他的多个所谓的改进都只是添加了空函数</span>（ 而且还是在开发工具里双击控件生成的范例代码 ）。另外他不知道为什么复制粘贴时很多代码放错了位置，所以他提供的程序很多奇怪的 BUG - 这些我提供的原版是没有的。 虽然我并不反对大家自由使用 winXray 的源码，但这个 TheMRLL 实在是太不像话，他提供的 EXE 请大家注意安全谨慎下载。
 
-# 关于：PAC 代理：
-winXray 的 PAC 代理稳定、流畅、易用。  在 PAC 模式下，winXray 会优先启用高效安全的 SOCKS5 协议，并且可以自动兼容在 PAC 模式下仅支持 HTTP代理的应用。winXray 也可以在 PAC 模式下完美支持 Telegram IP 地址库（ 旧版本升级请在 PAC 编辑器右键添加 Telegram IP 地址库 ） 。
+# PAC 代理模式 / 全局代理 + 路由模式 对比
 
-PAC 属于系统代理规则 - 是一种非常成( 老 )熟( 了 )的代理模式，与翻墙软件完全无关并完全独立，可以保证只有需要经过代理的域名才与翻墙软件发生关系。PAC 主要支持浏览器，可以避免迅雷、百度网盘、Steam 等流量在未经许可时经过翻墙软件。也只有 PAC 能真正让浏览器直接支持高效安全的 SOCKS5 协议，否则就只能改为低版本 SOCKS 或者 HTTP 代理。
+winXray 的 PAC 代理稳定、流畅、易用。  在 PAC 模式下，winXray 会优先启用高效安全的 SOCKS5 协议，并且可以自动兼容在 PAC 模式下仅支持 HTTP代理的应用。winXray 也可以在 PAC 模式下完美支持 Telegram IP 地址库 。
 
-winXray 里的 PAC 代理可以让目标应用（例如浏览器）优先选择高效安全的 SOCKS5 代理协议，
-对于不支持 SOCKS 代理的应用（例如谷歌地球），winXray 在 PAC 模式下会自动为这些应用提供 HTTP 代理。
+SOCKS5 支持对比：
+- [ ] 全局路由模式: 不支持 SOCKS5
+- [x] PAC模式: 支持 高效安全的SOCKS5   
+  
+UWP 应用支持对比：
+- [ ] 全局路由模式: UWP 应用全部无法联网。
+- [x] PAC模式: UWP 应用可以正常联网，使用 winXray 自带工具也可以为UWP应用开启本地代理。 
 
-# 关于：启用路由规则：
-请注意启用路由规则时必须切换到全局代理模式，全局代理是有一些局限的，
-使用全局 SOCKS 代理时浏览器等软件会降级为低版本 SOCKS 协议（ 存在DNS泄漏隐患 ），否则就只能设置为全局 HTTP 代理。
+DNS 解析对比：
+- [ ] 全局路由模式: 使用本机发起 DNS 解析，即使设为国外 DNS 服务器，仍然会返回适用于国内线路地址。
+- [x] PAC模式: 使用服务器上的 DNS 解析，安全可靠。
+
+根据客户端自动切换代理协议：
+- [ ] 全局路由模式: 不支持
+- [x] PAC模式: winXray 里的 PAC 代理可以让目标应用（例如浏览器）优先选择高效安全的 SOCKS5 代理协议，对于不支持 SOCKS 代理的应用（例如谷歌地球），winXray 在 PAC 模式下会自动为这些应用提供 HTTP 代理。
+
+IP 段代理规则：
+- [x] 全局路由模式: 比较好的支持 IP 段代理规则
+- [x] PAC模式: winXray 里 PAC 可以支持IP 段代理规则（ 完美支持 Telegram ）。
+
+独立性
+- [ ] 全局路由模式: 不独立，代理规则集成在翻墙软件内核中
+- [x] PAC模式: 完全独立，PAC 代理服务完全独立于翻墙软件，只有 PAC 指定的域名或IP才会与翻墙软件发生交互。
+
+兼容性
+- [ ] 全局路由模式: 不是由系统实现的规则，一旦设置全局代理，不管适不适合走代理的软件都被强制使用代理，所以兼容性不太好，会导致上述的 UWP 无法联网等问题。
+- [x] PAC模式: 由系统提供的PAC有良好的兼容性，因为历史悠久，一般的软件都会对PAC有良好的兼容，PAC 主要为适合走代理的浏览器等软件而设计，所以其他软件可以较好的识别并判断是不是要使用 PAC 指定的代理还是直连。
+
+简易度
+- [ ] 全局路由模式: 配置复杂，有一定门槛。
+- [x] PAC模式: 配置非常简单。
+
 
 一般不建议普通用户去编辑路由规则 - 错误的配置可能会导致敏感的流量误走代理服务器。
 专业的事请交给专业的人去做，使用 winXray 可以一键启用、更新 [v2ray-rules-dat](https://github.com/Loyalsoldier/v2ray-rules-dat) 提供的最新路由规则。

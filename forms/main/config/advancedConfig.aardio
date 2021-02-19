@@ -45,16 +45,13 @@ winform.radioHttpProxy.skin(style.radio)
 winform.radioSocksProxy.skin(style.radio)
 winform.radioHttpPac.skin(style.radio)
 winform.radioSocksPac.skin(style.radio)
-
 winform.btnUpdate.skin(style.primaryButton);
 winform.editSocksPort.skin(style.edit);
 winform.editPacPort.skin(style.edit);
 winform.editPacUrl.editBox.readonly = true;
-winform.lnkVersion.skin(style.link)
 
 import win.ui.tooltip;
 var tooltipCtrl = win.ui.tooltip( winform );
-tooltipCtrl.addTool(winform.lnkVersion,"点击检测更新" );
 tooltipCtrl.addTool(winform.editSocksPort,"点击右键可以复制IP:端口" ); 
 tooltipCtrl.addTool(winform.radioHttpProxy,"全局代理使用 HTTP 代理端口可以避免使用本机 DNS 解析域名。" );
 tooltipCtrl.addTool(winform.radioSocksProxy,'全局代理使用 SOCKS 代理端口时，Chrome 浏览器等会默认选用 SOCKS4 协议，SOCKS4 会使用本机 DNS 解析域名。' );
@@ -307,39 +304,46 @@ winform.tbMaxTestServers.onPosChanged = function( pos,thumbTrack ){
 	config.proxy.save();
 }
 
-import fsys.update.simpleMain;
-fsys.update.simpleMain.onStatusChanged(function(version,description,status){
-	/*注意此回调可捕获到调用前或调用后的更新状态变更*/
-	if(status=="ready"){
-		winform.lnkVersion.disabledText = null;	
-		winform.lnkVersion.text = "点这里重新启动软件更新到新版本：" + version
-		tooltipCtrl.addTool(winform.lnkVersion,description);
-	}
-	elseif(status=="complete"){
-		winform.lnkVersion.text = "已更新到最新版本:" + version; 
-		tooltipCtrl.addTool(winform.lnkVersion,description);
-		..publish("uiCommand.print",winform.lnkVersion.text );
-	} 
-	elseif(status=="latest"){
-		winform.lnkVersion.disabledText = null;
-		winform.lnkVersion.text = "已经是最新版本";
-		
-	} 
-	elseif(status=="failed"){
-		winform.lnkVersion.disabledText = null; 
-		..publish("uiCommand.print",description);
-		..publish("uiCommand.print","建议在「工具」中运行「github优化工具」修复无法访问 raw.githubusercontent.com 的问题。"); 
-	}
-})
-
-winform.lnkVersion.oncommand = function(id,event){ 
+if(table.getByNamespace("fsys.update.simpleMain")){
+	fsys.update.simpleMain.onStatusChanged(function(version,description,status){
+		/*注意此回调可捕获到调用前或调用后的更新状态变更*/
+		if(status=="ready"){
+			winform.lnkVersion.disabledText = null;	
+			winform.lnkVersion.text = "点这里重新启动软件更新到新版本：" + version
+			tooltipCtrl.addTool(winform.lnkVersion,description);
+		}
+		elseif(status=="complete"){
+			winform.lnkVersion.text = "已更新到最新版本:" + version; 
+			tooltipCtrl.addTool(winform.lnkVersion,description);
+			..publish("uiCommand.print",winform.lnkVersion.text );
+		} 
+		elseif(status=="latest"){
+			winform.lnkVersion.disabledText = null;
+			winform.lnkVersion.text = "已经是最新版本";
+			
+		} 
+		elseif(status=="failed"){
+			winform.lnkVersion.disabledText = null; 
+			..publish("uiCommand.print",description);
+			..publish("uiCommand.print","建议在「工具」中运行「github优化工具」修复无法访问 raw.githubusercontent.com 的问题。"); 
+		}
+	})
 	
-	winform.lnkVersion.text = fsys.update.simpleMain.getReadyStatusInfo() ? "正在启动自动更新" : "正在检查新版本";
-	winform.lnkVersion.disabledText = {'\uF254';'\uF251';'\uF252';'\uF253';'\uF250'}
-	if(fsys.update.simpleMain.checkUpdate(true)){
-		win.quitMessage();
+	winform.lnkVersion.skin(style.link)
+	tooltipCtrl.addTool(winform.lnkVersion,"点击检测更新" );
+	winform.lnkVersion.oncommand = function(id,event){ 
+		
+		winform.lnkVersion.text = fsys.update.simpleMain.getReadyStatusInfo() ? "正在启动自动更新" : "正在检查新版本";
+		winform.lnkVersion.disabledText = {'\uF254';'\uF251';'\uF252';'\uF253';'\uF250'}
+		if(fsys.update.simpleMain.checkUpdate(true)){
+			win.quitMessage();
+		}
 	}
 }
+else {
+	winform.lnkVersion.close();
+}
+
 
 winform.btnOpenFirewall.skin(style.plainButton)
 winform.btnOpenFirewall.oncommand = function(id,event){

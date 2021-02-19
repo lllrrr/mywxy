@@ -18,6 +18,7 @@ navCoreConfig={cls="plus";text="Core 配置 ( JSON )";left=162;top=600;right=293
 navOutbounds={cls="plus";text="服务器配置( JSON )";left=31;top=600;right=162;bottom=632;border={top=1;color=-16744448};db=1;dl=1;z=2};
 navRight={cls="plus";left=493;top=600;right=762;bottom=601;bgcolor=16777215;border={top=1;color=-16744448};db=1;dl=1;dr=1;linearGradient=180;z=4};
 navSubscription={cls="plus";text="订阅";left=293;top=600;right=359;bottom=632;border={top=1;color=-16744448};db=1;dl=1;z=11};
+navUwpExemption={cls="plus";text="UWP 应用配置";left=499;top=600;right=633;bottom=632;border={top=1;color=-16744448};db=1;dl=1;notify=1;z=18};
 plus={cls="plus";left=9;top=600;right=31;bottom=601;border={top=1;color=-16744448};db=1;dl=1;z=5};
 subscription={cls="\forms\main\config\subscription.aardio";left=9;top=19;right=930;bottom=594;bgcolor=16777215;db=1;dl=1;dr=1;dt=1;edge=1;z=1}
 )
@@ -716,6 +717,22 @@ winform.btnUpdateNaiveCore.oncommand = function(id,event){
 		winform.btnUpdateNaiveCore.disabledText = null;
 		winform.msgErr("NaÏveProxy Core 下载失败！");
 	} 		
+}
+
+if(!_WIN10_LATER){
+    winform.navUwpExemption.close();
+}
+else {
+	winform.navUwpExemption.skin(style.plainButton)
+	winform.navUwpExemption.oncommand = function( id,event ){
+		if(_STUDIO_INVOKED){
+        	winform.msgErr("请先发布为 EXE！");
+        	return;
+    	}
+    	
+    	import process;
+    	process.execute(io._exepath,"/uwp","runas")
+	}
 }
 
 winform.show();

@@ -1,6 +1,6 @@
 {
 updateUrl="https://raw.githubusercontent.com/winXray/winXray/master/release/update/";
 singleFile=1;
-description="发布 v3.6（稍后删库，尽快fork），优化代码，修正 NaiveProxy 错误，增加 HTTPS/HTTP 出站代理";
+description="发布 v3.7，增加托盘图标显示代理状态，增加 UWP 代理设置";
 outputDir="/release/update/"
 }
