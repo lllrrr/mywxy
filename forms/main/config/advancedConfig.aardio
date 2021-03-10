@@ -86,9 +86,19 @@ subscribe("sysProxy.modeChanged",function(mode){
 import v2ray.core;
 var onInboundsUpdated = function(){
 	var inbounds = ..config.core.default[["inbounds"]];
-	winform.editSocksPort.text = v2ray.core.socksProxyPort || inbounds[[1]][["port"]] || 1081;
-	winform.editHttpPort.text = v2ray.core.httpProxyPort || inbounds[[2]][["port"]] || 1082;
-	winform.chkLan.checked = inbounds[[1]][["listen"]] !== "127.0.0.1";
+	var socksInbounds,httpInbounds;
+	for(k,ib in inbounds){
+		if(ib.tag == "proxy"){
+			socksInbounds = ib;
+		} 
+		elseif(ib.tag == "http_proxy"){
+			httpInbounds = ib;
+		} 
+	}
+		
+	winform.editSocksPort.text = v2ray.core.socksProxyPort || socksInbounds[["port"]] || 1081;
+	winform.editHttpPort.text = v2ray.core.httpProxyPort || httpInbounds[["port"]] || 1082;
+	winform.chkLan.checked = socksInbounds[["listen"]] !== "127.0.0.1";
 	winform.btnOpenFirewall.disabled = !winform.chkLan.checked;
 }
 
@@ -137,6 +147,17 @@ winform.btnUpdate.oncommand = function(id,event){
 	client.close();  
 	
 	var client = wsock.tcp.client();  
+	var oldHttpPort = v2ray.core.httpProxPort;
+	if( tonumber(winform.editHttpPort.text)
+		&& tonumber(winform.editHttpPort.text) != oldHttpPort
+		&& client.connectTimeout("127.0.0.1",tonumber(winform.editHttpPort.text) ,0.5) ){
+		winform.editHttpPort.editBox.showErrorTip(,"端口已被占用");
+		winform.btnUpdate.disabledText = null;
+		return client.close(); 
+	} 
+	client.close();  
+	
+	var client = wsock.tcp.client();  
 	var oldPacPort = v2ray.pacServer.getPort();
 	if( tonumber(winform.editPacPort.text)
 		&& tonumber(winform.editPacPort.text) != oldPacPort
@@ -161,26 +182,37 @@ winform.btnUpdate.oncommand = function(id,event){
 	} 
 	
 	var restartCore = false;
+	
+	var socksInbounds,httpInbounds;
+	for(k,ib in config.core.default.inbounds){
+		if(ib.tag == "proxy"){
+			socksInbounds = ib;
+		} 
+		elseif(ib.tag == "http_proxy"){
+			httpInbounds = ib;
+		} 
+	}
+	
 	var port = tonumber(winform.editSocksPort.text) 
-	config.core.default.inbounds[1]["port"]  = port;
+	socksInbounds["port"]  = port;
 	if(port!=oldPort){ 
 		restartCore = true;
 	}	
 	
 	var port = tonumber(winform.editHttpPort.text) 
-	config.core.default.inbounds[2]["port"]  = port;
-	if(port!=oldPort){
+	httpInbounds["port"]  = port;
+	if(port!=oldHttpPort){
 		restartCore = true;
 	}		
 
 	var listen = winform.chkLan.checked ? "0.0.0.0" : "127.0.0.1"; 
-	if(listen!=config.core.default.inbounds[1]["listen"]){
-		config.core.default.inbounds[1]["listen"]= listen;
+	if(listen!=socksInbounds["listen"]){
+		socksInbounds["listen"]= listen;
 		restartCore = true;
 	}	
 	
 	if(listen!=config.core.default.inbounds[2]["listen"]){
-		config.core.default.inbounds[2]["listen"]= listen;
+		httpInbounds["listen"]= listen;
 		restartCore = true;
 	}			 
 	
@@ -341,7 +373,15 @@ if(table.getByNamespace("fsys.update.simpleMain")){
 	}
 }
 else {
-	winform.lnkVersion.close();
+    winform.lnkVersion.iconText = '\uF09B';
+	winform.lnkVersion.text = "github.com/win-xray/win-xray";
+	tooltipCtrl.addTool(winform.lnkVersion,"访问项目主页,友情提醒：WinXray未注册任何域名，谨防钓鱼网站" );
+	
+	winform.lnkVersion.oncommand = function(id,event){ 
+		
+		import process;
+		process.openUrl("https://github.com/win-xray/win-xray");
+	}
 }
 
 

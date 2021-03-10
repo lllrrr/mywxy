@@ -13,6 +13,7 @@ btnUpdateXrayCore={cls="plus";text="下载 / 更新 Xray Core";left=227;top=5;ri
 editCoreConfig={cls="edit";left=9;top=72;right=930;bottom=594;db=1;dl=1;dr=1;dt=1;edge=1;hide=1;hscroll=1;multiline=1;vscroll=1;z=7};
 editOutbounds={cls="edit";left=9;top=29;right=930;bottom=594;db=1;dl=1;dr=1;dt=1;edge=1;hscroll=1;multiline=1;vscroll=1;z=8};
 lbTip={cls="static";text="可在下面输入多行服务器分享链接，或JSON数组( 点击字段名会显示用法说明 )：";left=11;top=9;right=899;bottom=29;color=3947580;dl=1;dr=1;dt=1;font=LOGFONT(h=-13);transparent=1;z=9};
+lbTipForCoreJson={cls="static";text="tag 指定为 proxy,http_proxy 的节点属于自动维护节点 - 不可删除";left=468;top=45;right=849;bottom=68;color=4964352;dl=1;dt=1;transparent=1;z=19};
 navAdvancedConfig={cls="plus";text="代理端口 / 高级配置";left=359;top=600;right=493;bottom=632;border={top=1;color=-16744448};db=1;dl=1;z=10};
 navCoreConfig={cls="plus";text="Core 配置 ( JSON )";left=162;top=600;right=293;bottom=632;border={top=1;color=-16744448};db=1;dl=1;z=3};
 navOutbounds={cls="plus";text="服务器配置( JSON )";left=31;top=600;right=162;bottom=632;border={top=1;color=-16744448};db=1;dl=1;z=2};
@@ -58,6 +59,7 @@ tbs.onSelchange = function(idx,strip,form){
 	winform.advancedConfig.hide = idx!=4;
 	winform.btnUpdate.hide = idx>2;
 	winform.lbTip.hide = idx!=1; 
+	winform.lbTipForCoreJson.hide = true; 
 	
 	if(idx==1){
 		winform.btnUpdate.text = "更新服务器配置"; 
@@ -107,33 +109,62 @@ winform.btnUpdate.oncommand = function(id,event){
 			winform.btnUpdate.disabledText = null;
 			return;
 		}
-
-		if(cfg.outbounds[[1]][["tag"]]!="proxy"){
-			winform.msgErr(`outbounds[0]必须指定为{"tag":"proxy"}`);
+		
+		var proxyOutboundInCore;
+		for(k,ob in cfg.outbounds){
+			if(ob.tag == "proxy"){
+				proxyOutboundInCore = ob;
+			} 
+		}
+		
+		if( type(proxyOutboundInCore) !="table"  ){
+			winform.msgErr(`outbounds 数组中未找到默认出站节点 {tag:"proxy"}`);
+			winform.btnUpdate.disabledText = null;
+			return; 
+		}
+		
+		var socksInbounds,httpInbounds;
+		for(k,ib in cfg.inbounds){
+			if(ib.tag == "proxy"){
+				socksInbounds = ib;
+			} 
+			elseif(ib.tag == "http_proxy"){
+				httpInbounds = ib;
+			} 
+		}
+			
+		if( type(socksInbounds) !="table"  ){
+			winform.msgErr(`inbounds 数组中未找到SOCKS协议入站节点 {tag:"proxy"}`);
+			winform.btnUpdate.disabledText = null;
+			return; 
+		}
+		
+		if( type(httpInbounds) !="table"  ){
+			winform.msgErr(`inbounds 数组中未找到HTTP协议入站节点 {tag:"http_proxy"}`);
+			winform.btnUpdate.disabledText = null;
+			return; 
+		}
+	
+		if(type(socksInbounds[["listen"]])!="string"){
+			winform.msgErr(`出站节点 {tag:"proxy"} listen字段必须指定IP或0.0.0.0`);
 			winform.btnUpdate.disabledText = null;
 			return; 
 		}
 
-		if(type(cfg.inbounds[[1]][["listen"]])!="string"){
-			winform.msgErr(`inbounds[0].listen必须指定为SOCKS代理监听IP或0.0.0.0`);
-			winform.btnUpdate.disabledText = null;
-			return; 
-		}
-
-		if(type(cfg.inbounds[[1]][["port"]])!="number"){
-			winform.msgErr(`inbounds[0].port必须指定为SOCKS代理监听端口`);
+		if(type(socksInbounds[["port"]])!="number"){
+			winform.msgErr(`出站节点 {tag:"proxy"} port字段必须用数值指定监听端口`);
 			winform.btnUpdate.disabledText = null;
 			return; 
 		} 
 
-		if(type(cfg.inbounds[[2]][["listen"]])!="string"){
-			winform.msgErr(`inbounds[1].listen必须指定为HTTP代理监听IP或0.0.0.0`);
+		if(type(httpInbounds[["listen"]])!="string"){
+			winform.msgErr(`出站节点 {tag:"http_proxy"} listen字段必须指定IP或0.0.0.0`);
 			winform.btnUpdate.disabledText = null;
 			return; 
 		}
 
-		if(type(cfg.inbounds[[2]][["port"]])!="number"){
-			winform.msgErr(`inbounds[1].port必须指定为HTTP代理监听端口`);
+		if(type(httpInbounds[["port"]])!="number"){ 
+			winform.msgErr(`出站节点 {tag:"http_proxy"} port字段必须用数值指定监听端口`);
 			winform.btnUpdate.disabledText = null;
 			return; 
 		} 
@@ -519,13 +550,13 @@ winform.editCoreConfig.enablePopMenu({
 	{ /*---分隔线---*/ };
 	{ "重置为默认内核配置";
 		function(id){  
-			winform.editCoreConfig.text = ..string.load("\forms\main\config\coreConfigs\default.json") 
+			winform.editCoreConfig.text = string.crlf( string.load("\forms\main\config\coreConfigs\default.json") )
 			winform.editCoreConfig.msgOk('已重置为默认内核配置。\n请在下面点击：『更新内核配置』启用新的配置。',1300)
 		} 
 	}; 
 	{ "重置为启用路由规则默认内核配置";
 		function(id){  
-			winform.editCoreConfig.text = ..string.load("\forms\main\config\coreConfigs\v2ray.rules.json")
+			winform.editCoreConfig.text = string.crlf( string.load("\forms\main\config\coreConfigs\v2ray.rules.json") )
 			import v2ray.core.rules;
 			var versionTag = v2ray.core.rules.check();
 			if(versionTag) winform.editCoreConfig.msgOk('已重置为启用路由规则默认内核配置，\n已下载路由规则数据最新版本：' + versionTag+ '\n\n请在下面点击：『更新内核配置』启用新的配置。',2000)
@@ -620,7 +651,7 @@ winform.editOutbounds.wndproc = function(hwnd,message,wParam,lParam){
 
 winform.editCoreConfig.oncommand = function(id,event){
 	if( event === 0x100/*_EN_SETFOCUS*/){
-		winform.editCoreConfig.showInfoTip("提示",'inbounds[0] 必须为入站 SOCKS 代理，\ninbounds[1] 必须为入站 HTTP 代理，\noutbounds[0] 会转换为出站服务器数组。')
+		winform.lbTipForCoreJson.hide = false;
 	}
 }
 

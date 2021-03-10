@@ -1052,7 +1052,7 @@ if(config.proxy.test){
 }
 
 frmXray.chkAutoTest.skin(style.checkBox);
-
+frmXray.edit.print("友情提醒：WinXray 未注册任何域名，谨防钓鱼网站")
 
 frmXray.enableDpiScaling();
 win.loopMessage();

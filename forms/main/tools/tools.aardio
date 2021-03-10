@@ -18,6 +18,7 @@ btnWubiLex={cls="plus";text="WIN10 五笔助手（仅830KB，自带五笔86、98
 btnYoutube={cls="plus";text="Youtube 视频下载工具";left=26;top=203;right=262;bottom=245;align="left";color=3947580;dl=1;dt=1;font=LOGFONT(h=-16);iconStyle={align="left";font=LOGFONT(h=-27;name='FontAwesome');padding={left=18}};iconText='\uF167';notify=1;textPadding={left=50};z=1};
 editSshHost={cls="plus";left=158;top=23;right=386;bottom=47;align="left";bgcolor=16777215;border={bottom=1;color=-8355712};dl=1;dt=1;editable="edit";font=LOGFONT(h=-16);textPadding={bottom=1};z=7};
 lbCurrentProxyLocation={cls="static";left=245;top=74;right=729;bottom=101;color=32768;dl=1;dt=1;transparent=1;z=13};
+lbTip={cls="static";text="友情提醒：winXray 不会注册任何域名，谨防冒充官网的钓鱼网站！！！";left=227;top=603;right=918;bottom=630;align="right";color=5921370;db=1;dr=1;font=LOGFONT(h=-13);transparent=1;z=17};
 static={cls="static";text="账号@服务器：";left=36;top=27;right=151;bottom=54;align="right";color=4934475;dl=1;dt=1;font=LOGFONT(h=-13);transparent=1;z=8}
 )
 /*}}*/
